@@ -20,11 +20,11 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="Configurations\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FinanceControl.Application\FinanceControl.Application.csproj" />
+    <ProjectReference Include="..\FinanceControl.Persistence\FinanceControl.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
