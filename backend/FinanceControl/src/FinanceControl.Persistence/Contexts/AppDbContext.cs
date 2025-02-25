@@ -1,4 +1,5 @@
 ﻿using FinanceControl.Domain.Entities;
+using FinanceControl.Persistence.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,15 +9,15 @@ namespace FinanceControl.Persistence.Contexts
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<ApplicationUser>(entity =>
-            {
-                entity.ToTable("Users");
-                entity.Property(e => e.FullName).IsRequired().HasMaxLength(60);
-            });
+            builder.ApplyConfigurationsFromAssembly(typeof(ApplicationUserConfiguration).Assembly);
         }
     }
 }
