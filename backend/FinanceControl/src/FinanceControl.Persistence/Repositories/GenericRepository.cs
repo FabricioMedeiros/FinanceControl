@@ -15,6 +15,11 @@ namespace FinanceControl.Persistence.Repositories
             _context = context;
         }
 
+        public virtual IQueryable<TEntity> Query()
+        {
+            return _context.Set<TEntity>();
+        }
+
         public virtual async Task<IEnumerable<TEntity?>> GetAllAsync(
             Expression<Func<TEntity, bool>>? filter = null,
             params Expression<Func<TEntity, object>>[] includeProperties)
