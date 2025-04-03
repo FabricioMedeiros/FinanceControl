@@ -1,4 +1,4 @@
-﻿using FinanceControl.Persistence.Contexts;
+﻿using FinanceControl.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceControl.API.Configurations
@@ -8,7 +8,9 @@ namespace FinanceControl.API.Configurations
         public static void AddDatabaseConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            {
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            });
         }
     }
 }
