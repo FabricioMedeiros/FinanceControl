@@ -4,8 +4,8 @@ namespace FinanceControl.Domain.Interfaces
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {
-        IQueryable<TEntity> Query();
-        Task<IEnumerable<TEntity?>> GetAllAsync(Expression<Func<TEntity, bool>>? filter = null, params Expression<Func<TEntity, object>>[] includeProperties);
+        IQueryable<TEntity> Query(params Expression<Func<TEntity, object>>[] includeProperties);
+        Task<IEnumerable<TEntity?>> GetAllAsync(Expression<Func<TEntity, bool>>? filter = null);
         Task<TEntity?> GetByIdAsync(Guid id);
         Task<TEntity> AddAsync(TEntity entity);
         Task UpdateAsync(TEntity entity);

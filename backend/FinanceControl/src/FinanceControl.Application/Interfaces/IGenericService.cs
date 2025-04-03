@@ -1,4 +1,5 @@
 ﻿using FinanceControl.Domain.Entities;
+using System.Linq.Expressions;
 
 namespace FinanceControl.Application.Interfaces
 {
@@ -6,7 +7,7 @@ namespace FinanceControl.Application.Interfaces
         where TEntity : BaseEntity
         where TDto : class
     {
-        Task<PagedResult<TDto>> GetAllAsync(Dictionary<string, string>? filters, int? pageNumber = null, int? pageSize = null);
+        Task<PagedResult<TDto>> GetAllAsync(Dictionary<string, string>? filters, int? pageNumber = null, int? pageSize = null, Guid? userId = null, params Expression<Func<TEntity, object>>[] includes);
         Task<TDto?> GetByIdAsync(Guid id);
         Task<TEntity?> GetByIdAsync(Guid id, bool returnEntity);
         Task<TDto?> AddAsync(TDto dto);
