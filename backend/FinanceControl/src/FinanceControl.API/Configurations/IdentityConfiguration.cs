@@ -1,5 +1,5 @@
 ﻿using FinanceControl.Domain.Entities;
-using FinanceControl.Persistence.Contexts;
+using FinanceControl.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Identity;
 
 namespace FinanceControl.API.Configurations
