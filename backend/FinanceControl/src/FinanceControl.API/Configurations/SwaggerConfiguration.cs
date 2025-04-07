@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using FinanceControl.API.Filters.Swagger;
+using Microsoft.OpenApi.Models;
 
 namespace FinanceControl.API.Configurations
 {
@@ -9,6 +10,7 @@ namespace FinanceControl.API.Configurations
             services.AddSwaggerGen(opt =>
             {
                 opt.SwaggerDoc("v1", new OpenApiInfo { Title = "FinanceControl API", Version = "v1" });
+
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -20,20 +22,25 @@ namespace FinanceControl.API.Configurations
                 });
 
                 opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
                 {
-                    new OpenApiSecurityScheme
                     {
-                        Reference = new OpenApiReference
+                        new OpenApiSecurityScheme
                         {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+
+                opt.OperationFilter<CategorySchemaFilter>();
+                opt.OperationFilter<PaymentMethodSchemaFilter>();                
+                opt.OperationFilter<TransactionSchemaFilter>();
             });
-            });
+           
         }
     }
 }
