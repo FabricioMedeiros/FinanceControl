@@ -12,9 +12,13 @@ namespace FinanceControl.Application.Validators
                 .MinimumLength(3).WithMessage("O nome deve ter pelo menos 3 caracteres.");
 
             RuleFor(x => x.Type)
-                .NotNull().WithMessage("O tipo da categoria é obrigatório.");
+               .NotNull().WithMessage("O tipo da categoria é obrigatório.")
+               .Must(type => (int?)type == 0 || (int?)type == 1)
+         .     WithMessage("O tipo da categoria deve ser 0 (Despesa) ou 1 (Receita).");
         }
+
     }
+
 
     public class CategoryCreateValidator : CategoryValidatorBase
     {
