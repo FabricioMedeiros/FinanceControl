@@ -1,1 +1,37 @@
-<p>sidebar works!</p>
+<nav class="app-sidebar" [class.closed]="isSidebarClosed">
+  <ul>
+    <li>
+      <a href="#" title="Home">
+        <i class="fa fa-home"></i>
+        <span class="menu-text" *ngIf="!isSidebarClosed">Home</span>
+      </a>
+    </li>
+    <li>
+      <a [routerLink]="['/dashboard']" title="Dashboard">
+        <i class="fa fa-chart-bar"></i>
+        <span class="menu-text" *ngIf="!isSidebarClosed">Dashboard</span>
+      </a>
+    </li>
+    <li>
+      <a [routerLink]="['/transactions/list']" title="Lançamentos">
+        <i class="fa fa-list-alt"></i>
+        <span class="menu-text" *ngIf="!isSidebarClosed">Lançamentos</span>
+      </a>
+    </li>
+    <li>
+      <a [routerLink]="['/category/list']" title="Categorias">
+        <i class="fa fa-tags"></i>
+        <span class="menu-text" *ngIf="!isSidebarClosed">Categorias</span>
+      </a>
+    </li>
+    <li>
+      <a [routerLink]="['/paymentmethod/list']" title="Formas de Pagamento">
+        <i class="fa fa-credit-card"></i>
+        <span class="menu-text" *ngIf="!isSidebarClosed">Formas de Pagamento</span>
+      </a>
+    </li>
+  </ul>
+  <button (click)="toggleSidebar()" class="sidebar-toggle-btn">
+    <i class="fa" [class.fa-arrow-left]="!isSidebarClosed" [class.fa-arrow-right]="isSidebarClosed"></i>
+  </button>
+</nav>

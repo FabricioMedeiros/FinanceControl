@@ -1,0 +1,92 @@
+/* Estilos para o sidebar */
+.app-sidebar {
+    position: relative;
+    width: 250px;
+    height: calc(100vh - 120px);
+    background-color: #A55FED;
+    color: #ffffff; 
+    transition: width 0.3s;
+  }
+  
+  .app-sidebar.closed {
+    width: 80px; 
+  }
+
+  .app-sidebar ul {
+    list-style-type: none;
+  }
+  
+  .app-sidebar li {
+    padding: 15px 20px;
+  }
+  
+  .app-sidebar a {
+    color: #ecf0f1;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+  }
+  
+  .app-sidebar.closed a {
+    justify-content: center; 
+    padding-left: 0; 
+  }
+  
+  .app-sidebar a i {
+    margin-right: 10px;
+  }
+  
+  .app-sidebar.closed a i {
+    margin-right: 0;
+  }
+  
+  .app-sidebar.closed .menu-text {
+    display: none;
+  }
+  
+  .sidebar-toggle-btn {
+    position: absolute;
+    top: 0px;
+    right: -34px; 
+    background-color: #A55FED;
+    color: #ecf0f1;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    transition: right 0.3s;
+    outline: none; 
+    box-shadow: none; 
+  }
+  
+  .app-sidebar.closed .sidebar-toggle-btn {
+    right: -34px; 
+  }
+  
+  .sidebar-toggle-btn i {
+    font-size: 16px;
+  }
+  
+  @media (max-width: 768px) {
+    .app-sidebar {
+      width: 80px; 
+    }
+  
+    .app-sidebar .sidebar-toggle-btn {
+      display: none; 
+    }
+  
+    .app-sidebar a {
+      justify-content: center; 
+      padding-left: 0; 
+    }
+  
+    .app-sidebar a i {
+      margin-right: 0;
+    }
+  
+    .app-sidebar .menu-text {
+      display: none;
+    }
+  }
+  
