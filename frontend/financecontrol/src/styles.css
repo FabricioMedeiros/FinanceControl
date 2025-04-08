@@ -1,1 +1,122 @@
-/* You can add global styles to this file, and also import other style files */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body,
+  html {
+    height: 100%;
+    overflow-x: hidden;
+  }
+  
+  body {
+    background: #f2f2f2;
+  }
+  
+  /* Estilos para o alert */
+  .alert {
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    word-break: break-word;
+    padding: 15px;
+    margin: 0;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+  
+  .alert h3 {
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .alert ul {
+    padding-left: 10px;
+    margin: 0;
+  }
+  
+  .alert li {
+    margin-bottom: 2px; 
+  }
+  
+  /* Estilos para mensagem de registros não localizados */
+  .no-results-message {
+    text-align: center;
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #f8d7da; 
+    color: #721c24; 
+    border: 1px solid #f5c6cb; 
+    border-radius: 4px;
+  }
+  
+  /* Estilos para notificações de sucesso */
+  .toast-success {
+    background-color: #0056b3 !important; /* Azul */
+    color: #fff !important;
+    border-color: #0056b3 !important;
+    box-shadow: 0 0 10px rgba(0, 86, 179, 0.5) !important;
+  }
+  
+  .toast-success .toast-title,
+  .toast-success .toast-message {
+    color: #ffffff !important;
+  }
+  
+  .toast-success .toast-progress {
+    background-color: #ffffff !important;
+  }
+  
+  /* Estilos para notificações de erro */
+  .toast-error {
+    background-color: #d9534f !important; /* Vermelho */
+    color: #fff !important;
+    border-color: #d9534f !important;
+    box-shadow: 0 0 10px rgba(217, 83, 79, 0.5) !important;
+  }
+  
+  .toast-error .toast-title,
+  .toast-error .toast-message {
+    color: #ffffff !important;
+  }
+  
+  .toast-error .toast-progress {
+    background-color: #ffffff !important;
+  }
+  
+  /* Estilos para o modal de exclusão de registro */
+  .custom-modal-delete .modal-dialog {
+    max-width: 500px;
+    margin: 1.75rem auto;
+  }
+  
+  .custom-modal-delete .modal-content {
+    border-radius: 8px;
+  }
+  
+  .custom-modal-delete .modal-title {
+    font-size: 1.25rem;
+  }
+  
+  .custom-modal-delete .modal-body p {
+    font-size: 1rem;
+  }
+  
+  .custom-modal-delete .modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .custom-modal-delete .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px; 
+  }
+  
+  .custom-modal-delete .button-container button {
+    width: 120px; 
+  }
