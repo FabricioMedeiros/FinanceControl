@@ -1,7 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-const routes: Routes = [{ path: 'navigation', loadChildren: () => import('./features/navigation/navigation.module').then(m => m.NavigationModule) }];
+import { HomeComponent } from './features/navigation/components/home/home.component';
+import { NotFoundComponent } from './features/navigation/components/not-found/not-found.component';
+
+const routes: Routes = [ 
+  { path: 'home', component: HomeComponent,  },
+  { path: 'not-found', component: NotFoundComponent,  },
+  { path: '**', component: NotFoundComponent }];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
