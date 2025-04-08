@@ -28,6 +28,16 @@ import { ServiceUnavailableComponent } from './components/service-unavailable/se
   imports: [
     CommonModule,
     NavigationRoutingModule
+  ],
+  exports:[
+    HomeComponent,
+    FooterComponent,
+    SidebarComponent,
+    HeaderComponent,
+    LogoComponent,
+    MenuLoginComponent,
+    NotFoundComponent,
+    ServiceUnavailableComponent
   ]
 })
 export class NavigationModule { }
