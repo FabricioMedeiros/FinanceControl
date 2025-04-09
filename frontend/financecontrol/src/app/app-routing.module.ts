@@ -3,10 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { HomeComponent } from './features/navigation/components/home/home.component';
 import { NotFoundComponent } from './features/navigation/components/not-found/not-found.component';
+import { ServiceUnavailableComponent } from './features/navigation/components/service-unavailable/service-unavailable.component';
 
-const routes: Routes = [ 
-  { path: 'home', component: HomeComponent,  },
-  { path: 'not-found', component: NotFoundComponent,  },
+const routes: Routes = [
+  { path: 'home', component: HomeComponent, },
+  { path: 'service-unavailable', component: ServiceUnavailableComponent},
+  { path: 'not-found', component: NotFoundComponent, },
   { path: '**', component: NotFoundComponent }];
 
 @NgModule({
