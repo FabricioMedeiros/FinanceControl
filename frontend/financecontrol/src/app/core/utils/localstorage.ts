@@ -4,8 +4,7 @@ import { JwtToken } from "src/app/features/account/models/jtw.token";
 export class LocalStorageUtils {
 
     public getUser() {
-        const userJson = localStorage.getItem('financecontrol.user');
-        return userJson ? JSON.parse(userJson) : null;
+        return localStorage.getItem('financecontrol.user');
     }
 
     public saveLocalUserData(response: any) {
@@ -15,7 +14,7 @@ export class LocalStorageUtils {
             try {
                 const decodedToken = jwtDecode<JwtToken>(response.token);
             
-                this.saveUser(decodedToken.username);
+                this.saveUser(decodedToken.userName);
                 this.saveEmailUser(decodedToken.email);
             } catch (error) {
                 console.error('Erro ao decodificar o token:', error);
@@ -44,10 +43,10 @@ export class LocalStorageUtils {
     }
 
     public saveUser(user: string) {
-        localStorage.setItem('financecontrol.user', JSON.stringify(user));
+        localStorage.setItem('financecontrol.user', user);
     }
 
     public saveEmailUser(email: string) {
-        localStorage.setItem('financecontrol.email', JSON.stringify(email));
+        localStorage.setItem('financecontrol.email', email);
     }
 }
