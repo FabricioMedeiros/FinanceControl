@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import { JwtToken } from "../features/account/models/jtw.token";
+import { JwtToken } from "src/app/features/account/models/jtw.token";
 
 export class LocalStorageUtils {
 
