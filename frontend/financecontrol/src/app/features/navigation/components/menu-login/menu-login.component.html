@@ -1,1 +1,12 @@
-<p>menu-login works!</p>
+<ul class="navbar-nav">
+    <ng-container *ngIf="isUserLoggedIn()">
+        <li class="nav-item">
+            <a class="nav-link" href="javascript:void(0)">
+                <span class="user-name">{{ user }}</span>
+                <span class="logout" (click)="logout()">
+                    Sair <span class="fas fa-sign-out-alt"></span>
+                </span>
+            </a>
+        </li>
+    </ng-container>
+</ul>
