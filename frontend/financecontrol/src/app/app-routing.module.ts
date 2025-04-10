@@ -6,7 +6,9 @@ import { NotFoundComponent } from './features/navigation/components/not-found/no
 import { ServiceUnavailableComponent } from './features/navigation/components/service-unavailable/service-unavailable.component';
 
 const routes: Routes = [
-  { path: 'home', component: HomeComponent, },
+  { path: '', redirectTo: 'account/login', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent},
+  { path: 'account', loadChildren: () => import('./features/account/account.module').then(m => m.AccountModule) },
   { path: 'service-unavailable', component: ServiceUnavailableComponent},
   { path: 'not-found', component: NotFoundComponent, },
   { path: '**', component: NotFoundComponent }];
