@@ -13,6 +13,7 @@ import { LocalStorageUtils } from './core/utils/localstorage';
 import { ErrorInterceptor } from './core/interceptors/error.handler.service';
 import { NavigationService } from './core/services/navigation.service';
 import { SharedModule } from './shared/shared.module';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 export const httpInterceptorProviders = [
   { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
@@ -29,6 +30,7 @@ export const httpInterceptorProviders = [
     HttpClientModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot({ toastClass: 'ngx-toastr custom-toast', preventDuplicates: true }),
+    NgxSpinnerModule.forRoot(),
     AccountModule,
     NavigationModule,
     SharedModule
