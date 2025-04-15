@@ -13,6 +13,7 @@ const routes: Routes = [
   { path: 'account', loadChildren: () => import('./features/account/account.module').then(m => m.AccountModule) },
   { path: 'service-unavailable', component: ServiceUnavailableComponent, canActivate: [navigationGuard]},
   { path: 'not-found', component: NotFoundComponent, canActivate: [navigationGuard] },
+  { path: 'category', loadChildren: () => import('./features/category/category.module').then(m => m.CategoryModule) },
   { path: '**', component: NotFoundComponent }];
 
 @NgModule({
