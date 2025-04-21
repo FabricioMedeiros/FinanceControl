@@ -4,5 +4,5 @@ export interface Category {
     id: string;
     name: string;
     description: string;
-    categoryType : CategoryType;
+    type : CategoryType;
 }
