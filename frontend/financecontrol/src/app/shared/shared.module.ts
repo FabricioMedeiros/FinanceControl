@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { PaginationComponent } from './components/pagination/pagination.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CategoryService } from './services/category.service';
 
 
 @NgModule({
@@ -15,6 +16,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     FormsModule,
     ReactiveFormsModule
-  ]
+  ],
+  exports:[
+    PaginationComponent,
+    SearchBarComponent
+  ],
+  providers: [CategoryService]
 })
 export class SharedModule { }
