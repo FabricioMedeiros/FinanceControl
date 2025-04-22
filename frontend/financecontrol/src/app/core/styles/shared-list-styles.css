@@ -1,0 +1,144 @@
+/* Estilos para páginas de listagem de dados */
+.content-list-container {
+    background-color: #ffffff;
+    margin: 10px 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: calc(100vh - 140px);
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    background-color: #A55FED;
+}
+
+.title h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0;
+}
+
+.options-filter-list-container {
+    margin-bottom: 5px;
+}
+
+.alert {
+    width: 50%;
+    margin: 5px auto;
+}
+
+.no-results-message{
+    margin: 0 15px 11px 15px;
+}
+
+.actions-container {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-new{
+    margin-left: 15px;
+}
+
+/* Tabela */
+.table-container {
+    display: block;
+    overflow-x: auto;
+    margin: 0 15px 0 15px;
+    box-sizing: border-box;
+}
+
+.table {
+    table-layout: auto;
+    border-collapse: collapse;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    min-width: 100%; 
+    max-width: 100%; 
+}
+
+.table thead {
+    background-color:#A55FED;
+    color: white;
+}
+
+.table,
+th,
+td {
+    border: 1px solid #ddd;
+}
+
+th,
+td {
+    padding: 10px;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.align-left {
+    text-align: left;
+}
+
+.align-right {
+    text-align: right;
+}
+
+.width-75-percent {
+    width: 75%;
+}
+
+.action-column {
+    text-align: center;
+    width: 10%;
+    vertical-align: middle;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-new {
+    align-self: flex-start;
+    margin-bottom: 0px;
+}
+
+.actions-container {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 5px;
+    gap: 10px;
+}
+
+.modal-btn {
+    margin-right: 15px;
+    width: 100px;
+}
+
+/* Ajustes para telas pequenas */
+@media (max-width: 768px) {
+    .content-list-container {
+        margin: 10px;
+    }
+
+    .alert {
+        width: 100%;
+    }
+
+    .table {
+        min-width: 100%;
+    }
+
+    .width-75-percent {
+        width: auto;
+    }
+}
