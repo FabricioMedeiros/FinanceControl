@@ -14,6 +14,7 @@ const routes: Routes = [
   { path: 'service-unavailable', component: ServiceUnavailableComponent, canActivate: [navigationGuard]},
   { path: 'not-found', component: NotFoundComponent, canActivate: [navigationGuard] },
   { path: 'category', loadChildren: () => import('./features/category/category.module').then(m => m.CategoryModule) },
+  { path: 'payment-method', loadChildren: () => import('./features/payment-method/payment-method.module').then(m => m.PaymentMethodModule) },
   { path: '**', component: NotFoundComponent }];
 
 @NgModule({
