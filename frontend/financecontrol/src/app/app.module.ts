@@ -2,9 +2,11 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +17,7 @@ import { ErrorInterceptor } from './core/interceptors/error.handler.service';
 import { NavigationService } from './core/services/navigation.service';
 import { SharedModule } from './shared/shared.module';
 import { CategoryModule } from './features/category/category.module';
+
 
 export const httpInterceptorProviders = [
   { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
@@ -32,6 +35,7 @@ export const httpInterceptorProviders = [
     BrowserAnimationsModule,
     ToastrModule.forRoot({ toastClass: 'ngx-toastr custom-toast', preventDuplicates: true }),
     NgxSpinnerModule.forRoot(),
+    ModalModule.forRoot(),
     AccountModule,
     NavigationModule,
     SharedModule,
