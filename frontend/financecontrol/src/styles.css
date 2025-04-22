@@ -30,6 +30,35 @@ body {
   color: #FFFFFF;
 }
 
+.btn-outline-primary-color {
+  border: 2px solid #8A05BE; 
+  background-color: transparent;
+  color: #8A05BE; 
+}
+
+.btn-outline-secondary-color {
+  border: 2px solid #A55FED;
+  background-color: transparent;
+  color: #A55FED;
+}
+
+.btn-outline-primary-color:hover, .btn-outline-secondary-color:hover {
+  background-color: #8A05BE; 
+  color: #FFFFFF; 
+}
+
+.btn-gray-light-color {
+  background-color: #e0e0e0;
+  border-color: #d6d6d6;
+  color: #333; 
+}
+
+.btn-gray-light-color:hover {
+  background-color: #6c757d; 
+  border-color: #6c757d;
+  color: #fff; 
+}
+
 /* Estilos para o alert */
 .alert {
   max-width: 100%;
