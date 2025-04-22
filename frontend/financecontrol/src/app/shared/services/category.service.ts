@@ -37,7 +37,7 @@ export class CategoryService extends BaseService {
             .pipe(catchError(super.serviceError));
     }
 
-    registerSpecialty(category: Category): Observable<Category> {
+    registerCategory(category: Category): Observable<Category> {
         const headers = this.GetAuthHeaderJson();
 
         return this.http
@@ -48,7 +48,7 @@ export class CategoryService extends BaseService {
             );
     }
 
-    updateSpecialty(category: Category): Observable<Category> {
+    updateCategory(category: Category): Observable<Category> {
         const headers = this.GetAuthHeaderJson();
         const httpOptions = {
             headers: headers
