@@ -15,6 +15,7 @@ const routes: Routes = [
   { path: 'not-found', component: NotFoundComponent, canActivate: [navigationGuard] },
   { path: 'category', loadChildren: () => import('./features/category/category.module').then(m => m.CategoryModule) },
   { path: 'payment-method', loadChildren: () => import('./features/payment-method/payment-method.module').then(m => m.PaymentMethodModule) },
+  { path: 'transaction', loadChildren: () => import('./features/transaction/transaction.module').then(m => m.TransactionModule) },
   { path: '**', component: NotFoundComponent }];
 
 @NgModule({
