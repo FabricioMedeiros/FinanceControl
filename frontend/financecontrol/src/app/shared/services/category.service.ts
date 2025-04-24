@@ -29,7 +29,7 @@ export class CategoryService extends BaseService {
             .pipe(catchError(super.serviceError));
     }     
 
-    getSpecialtyById(id: number): Observable<Category> {
+    getCategoryById(id: string): Observable<Category> {
         const headers = this.GetAuthHeaderJson();
 
         return this.http

@@ -9,7 +9,7 @@
     <div class='options-filter-list-container'>
         <!-- Título -->
         <div class="title">
-            <h1>Cateogrias</h1>
+            <h1>Categorias</h1>
         </div>
 
         <!-- Erros -->
@@ -80,7 +80,7 @@
                 </button>
             </div>
             <div class="modal-body text-center custom-modal-delete">
-                <p>Confirma a exclusão desta categoria: {{selectedItem.description}}?</p>
+                <p>Confirma a exclusão desta categoria: {{selectedItem.name}}?</p>
                 <div class="button-container">
                     <button type="button" class="btn btn-danger" (click)="confirmDelete(selectedItem)">Sim</button>
                     <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">Não</button>
