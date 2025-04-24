@@ -1,1 +1,45 @@
-<p>payment-method-form works!</p>
+<!-- Spinner -->
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-pulse" [fullScreen]="true">
+    <p style="color: white; font-size: 20px;">Carregando...</p>
+</ngx-spinner>
+
+<div class="form-content-container">
+    <!-- Erros -->
+    <div class="alert alert-danger" *ngIf="errors.length > 0">
+        <h3>Atenção</h3>
+        <ul>
+            <li *ngFor="let error of errors">{{ error }}</li>
+        </ul>
+    </div>
+
+    <!-- Contêiner do Card -->
+    <div class="card-container">
+        <div class="card">
+            <div class="card-header">
+                <h3>{{ isEditMode ? 'Editar Forma de Pagamento' : 'Cadastro de Forma de Pagamento' }}</h3>
+            </div>
+
+            <form [formGroup]="form" (ngSubmit)="savePaymentMethod()">
+                <div class="card-body">
+                    <!-- Nome -->
+                    <div class="form-group">
+                        <label for="name">Nome</label>
+                        <input type="text" id="name" class="form-control" formControlName="name"
+                            [ngClass]="{'is-invalid': displayMessage['name']}" />
+
+                        <!-- Mensagem de Erro -->
+                        <span class="text-danger" *ngIf="displayMessage['name']">
+                            <p [innerHTML]="displayMessage['name']"></p>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <!-- Botões de Ação -->
+                    <button type="submit" class="btn btn-primary-color" [disabled]="!form.valid">Salvar</button>
+                    <button type="button" class="btn btn-secondary" (click)="cancel('payment-method/list')">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
