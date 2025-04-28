@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { PaginationComponent } from './components/pagination/pagination.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { CategoryService } from './services/category.service';
 import { PaymentMethodService } from './services/payment-method.service';
+import { TransactionService } from './services/transaction.service';
 
 @NgModule({
   declarations: [
@@ -21,6 +23,6 @@ import { PaymentMethodService } from './services/payment-method.service';
     PaginationComponent,
     SearchBarComponent
   ],
-  providers: [CategoryService, PaymentMethodService]
+  providers: [CategoryService, PaymentMethodService, TransactionService]
 })
 export class SharedModule { }
