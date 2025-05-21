@@ -8,8 +8,8 @@ namespace FinanceControl.Application.Interfaces
         where TDto : class
     {
         Task<PagedResult<TDto>> GetAllAsync(Dictionary<string, string>? filters, int? pageNumber = null, int? pageSize = null, Guid? userId = null, params Expression<Func<TEntity, object>>[] includes);
-        Task<TDto?> GetByIdAsync(Guid id);
-        Task<TEntity?> GetByIdAsync(Guid id, bool returnEntity);
+        Task<TDto?> GetByIdAsync(Guid id, params Expression<Func<TEntity, object>>[] includes);
+        Task<TEntity?> GetByIdAsync(Guid id, bool returnEntity, params Expression<Func<TEntity, object>>[] includeProperties);
         Task<TDto?> AddAsync(TDto dto);
         Task<TDto?> AddAsync(TEntity entity);
         Task UpdateAsync(TDto dto);

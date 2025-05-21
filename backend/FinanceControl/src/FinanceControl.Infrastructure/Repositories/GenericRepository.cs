@@ -27,7 +27,6 @@ namespace FinanceControl.Infrastructure.Repositories
             return query;
         }
 
-
         public virtual async Task<IEnumerable<TEntity?>> GetAllAsync(
             Expression<Func<TEntity, bool>>? filter = null)
         {
