@@ -39,6 +39,21 @@ namespace FinanceControl.API.Controllers
             return CustomResponse(transactions);
         }
 
+        [HttpGet("by-period")]
+        public async Task<IActionResult> GetTransactionsByPeriod(
+                          [FromQuery] DateTime startDate,
+                          [FromQuery] DateTime endDate,
+                          [FromQuery] Guid? categoryId = null,
+                          [FromQuery] Guid? paymentMethodId = null,
+                          [FromQuery] int? pageNumber = null,
+                          [FromQuery] int? pageSize = null)
+        {
+            var transactions = await _transactionService.GetTransactionsByPeriodAsync(
+                startDate, endDate, categoryId, paymentMethodId, pageNumber, pageSize);
+
+            return CustomResponse(transactions);
+        }
+
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(Guid id)
         {
