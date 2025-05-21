@@ -41,9 +41,9 @@ namespace FinanceControl.Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
-        public virtual async Task<TEntity?> GetByIdAsync(Guid id)
+        public virtual async Task<TEntity?> GetByIdAsync(Guid id, params Expression<Func<TEntity, object>>[] includeProperties)
         {
-            return await _context.Set<TEntity>().FindAsync(id);
+            return await Query(includeProperties).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<TEntity> AddAsync(TEntity entity)
