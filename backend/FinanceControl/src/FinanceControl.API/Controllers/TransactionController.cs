@@ -54,10 +54,15 @@ namespace FinanceControl.API.Controllers
             return CustomResponse(transactions);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:Guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var transaction = await _transactionService.GetByIdAsync(id);
+            var transaction = await _transactionService.GetByIdAsync(id,
+                includes: new Expression<Func<Transaction, object>>[]
+                {
+                  x => x.Category,
+                  x => x.PaymentMethod
+                });
 
             if (transaction == null) return NotFound();
 
@@ -74,7 +79,7 @@ namespace FinanceControl.API.Controllers
             var createdTransaction = await _transactionService.AddAsync(transaction);
             return CustomResponse(createdTransaction);
         }
-        
+
         [HttpPut("{id:Guid}")]
         [ValidationContext(typeof(TransactionUpdateValidator))]
         public async Task<IActionResult> Update(Guid id, [FromBody] TransactionDto transactionDto)
