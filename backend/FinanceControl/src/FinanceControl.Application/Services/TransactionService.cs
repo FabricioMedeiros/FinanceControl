@@ -49,8 +49,10 @@ namespace FinanceControl.Application.Services
 
             return new PagedResult<TransactionDto>
             {
-                Items = _mapper.Map<List<TransactionDto>>(transactions),
-                TotalRecords = totalCount
+                Page = pageNumber ?? 1,
+                PageSize = pageSize ?? totalCount,
+                TotalRecords = totalCount,
+                Items = _mapper.Map<List<TransactionDto>>(transactions)
             };
         }
     }
