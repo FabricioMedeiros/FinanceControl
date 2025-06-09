@@ -67,13 +67,13 @@ export abstract class BaseListComponent<T> implements OnInit {
     });
   }
 
-  private processLoadSuccess(response: any) {
+  processLoadSuccess(response: any) {
     this.items = response.data.items;
     this.currentPage = response.data.page;
     this.totalPages = Math.ceil(response.data.totalRecords / response.data.pageSize);
   }
 
-  private processLoadFail(error: any) {
+  processLoadFail(error: any) {
     if (error?.status === 401) {
       this.spinner.hide();
       return;
@@ -84,7 +84,7 @@ export abstract class BaseListComponent<T> implements OnInit {
     this.spinner.hide();
   }
 
-  private processCompleted() {
+  processCompleted() {
     this.loadingData = false;
     this.spinner.hide();
   }
