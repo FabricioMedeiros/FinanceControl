@@ -1,1 +1,162 @@
-<p>transaction-list works!</p>
+<!-- Spinner -->
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-pulse" [fullScreen]="true">
+  <p style="color: white; font-size: 20px;">Carregando...</p>
+</ngx-spinner>
+
+<div class="content-list-container">
+
+  <!-- Opções de Pesquisa -->
+  <div class="options-filter-list-container">
+    <!-- Título -->
+    <div class="title">
+      <h1>Lançamentos</h1>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-container d-flex flex-wrap gap-2 align-items-end">
+      <!-- Página -->
+      <div class="filter-item small-field">
+        <label for="pageSizeSelect"><strong>Exibir:</strong></label>
+        <select id="pageSizeSelect" [(ngModel)]="selectedPageSize" (change)="onPageSizeChange()" class="form-select">
+          <option *ngFor="let option of pageSizeOptions" [value]="option">
+            {{ option }} por página
+          </option>
+        </select>
+      </div>
+
+      <!-- Data Inicial -->
+      <div class="filter-item small-field">
+        <label><strong>Data Inicial:</strong></label>
+        <div class="input-group">
+          <input type="text" class="form-control" bsDatepicker [(ngModel)]="startDate"
+            [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-purple' }" #startPicker="bsDatepicker"
+            placeholder="Data inicial">
+          <div class="input-group-append">
+            <button type="button" class="btn btn-outline-secondary btn-calendar" (click)="startPicker.toggle()">
+              <i class="fa fa-calendar"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Final -->
+      <div class="filter-item small-field">
+        <label><strong>Data Final:</strong></label>
+        <div class="input-group">
+          <input type="text" class="form-control" bsDatepicker [(ngModel)]="endDate"
+            [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-purple' }" #endPicker="bsDatepicker"
+            placeholder="Data final">
+          <div class="input-group-append">
+            <button type="button" class="btn btn-outline-secondary btn-calendar" (click)="endPicker.toggle()">
+              <i class="fa fa-calendar"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categoria -->
+      <div class="filter-item large-field">
+        <label><strong>Categoria:</strong></label>
+        <select [(ngModel)]="selectedCategory" (change)="onCategoryChange()" class="form-select">
+          <option [value]="'Todas'">Todas</option>
+          <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+        </select>
+      </div>
+
+      <!-- Método de Pagamento -->
+      <div class="filter-item large-field">
+        <label><strong>Método de Pagamento:</strong></label>
+        <select [(ngModel)]="selectedPaymentMethod" (change)="onPaymentMethodChange()" class="form-select">
+          <option [value]="'Todos'">Todos</option>
+          <option *ngFor="let method of paymentMethods" [value]="method.id">{{ method.name }}</option>
+        </select>
+      </div>
+
+      <!-- Botão pesquisar -->
+      <div class="filter-item d-flex flex-column justify-content-end">
+        <button type="button" class="btn btn-primary-color" (click)="onSearch()" aria-label="Pesquisar">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mensagens de erro -->
+    <div *ngIf="errorMessage && errorMessage.length > 0" class="alert alert-danger">
+      <h3>Atenção!</h3>
+      <ul>
+        <li>{{ errorMessage }}</li>
+      </ul>
+    </div>
+
+    <div *ngIf="items.length === 0 && searchTerm !== '' && !errorMessage && !loadingData" class="no-results-message">
+      Nenhum resultado encontrado.
+    </div>
+
+    <a class="btn btn-new btn-outline-primary-color" (click)="addItem('transaction/new')">
+      <i class="fas fa-plus"></i> Cadastrar
+    </a>
+  </div>
+
+  <!-- Tabela -->
+  <div class="table-container">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Categoria</th>
+          <th>Valor</th>
+          <th>Forma de Pagamento</th>
+          <th>Descrição</th>
+          <th class="text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let transaction of items">
+          <td class="text-center">{{ transaction.date | date:'dd/MM/yyyy' }}</td>
+          <td class="align-left">{{ transaction.category.name }}</td>
+          <td class="align-right">{{ transaction.amount | currencyFormat }}</td>
+          <td class="align-left">{{ transaction.paymentMethod.name }}</td>
+          <td class="align-left">{{ transaction.description }}</td>
+          <td class="action-column">
+            <div class="button-group">
+              <button class="btn btn-action btn-gray-light-color" (click)="editItem(transaction, 'transaction/edit')">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-action btn-danger" (click)="openDeleteModal(template, transaction)">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Paginação -->
+    <div *ngIf="items.length > 0">
+      <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChanged)="onPageChanged($event)">
+      </app-pagination>
+    </div>
+
+    <!-- Modal -->
+    <ng-template #template>
+      <div class="modal-header">
+        <h4 class="modal-title text-danger">Atenção</h4>
+        <button type="button" class="close" aria-label="Close" (click)="bsModalRef.hide()">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body text-center custom-modal-delete">
+        <p>
+          Confirma a exclusão do lançamento:
+          {{ selectedItem.date | date: 'dd/MM/yyyy' }} -
+          {{ selectedItem.category.name }} -
+          {{ selectedItem.amount | currencyFormat }} ?
+        </p>
+        <div class="button-container">
+          <button type="button" class="btn btn-danger" (click)="confirmDelete(selectedItem)">Sim</button>
+          <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">Não</button>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>

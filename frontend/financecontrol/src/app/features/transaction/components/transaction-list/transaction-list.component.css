@@ -1,0 +1,94 @@
+@import 'src/app/core/styles/shared-list-styles.css';
+
+/* Container principal de filtros */
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin: 15px;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  justify-content: flex-start;
+}
+
+/* Filtro individual */
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  flex: 1 1 100%;
+  width: 100%;
+}
+
+/* Tamanho de filtro pequeno */
+.filter-item.small-field {
+  min-width: 130px;
+}
+
+/* Tamanho de filtro grande */
+.filter-item.large-field {
+  width: 270px;
+  min-width: 270px;
+}
+
+/* Estilização dos elementos de formulário */
+.filter-item label {
+  margin-bottom: 4px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.filter-item select.form-select,
+.filter-item input.form-control {
+  height: 38px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.filter-item .btn {
+  height: 38px;
+  padding: 6px 12px;
+  width: 100%;
+}
+
+.input-group-append .btn {
+  height: 36px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+/* Datepicker personalizado */
+::ng-deep .theme-purple .bs-datepicker-head {
+  background-color: #820ad1 !important;
+  color: white !important;
+}
+
+::ng-deep .theme-purple .bs-datepicker-body table td span.selected,
+::ng-deep .theme-purple .bs-datepicker-body table td span:hover {
+  background-color: #820ad1 !important;
+  color: white !important;
+}
+
+/* Responsivo: em telas grandes, os filtros ficam em linha */
+@media (min-width: 992px) {
+  .filters-container {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+
+  .filter-item {
+    min-width: 0;
+    width: auto;
+    flex: 0 1 auto;
+  }
+
+  .filter-item.large-field {
+    width: 250px;
+  }
+
+  .filter-item.small-field {
+    max-width: 150px;
+  }
+}
