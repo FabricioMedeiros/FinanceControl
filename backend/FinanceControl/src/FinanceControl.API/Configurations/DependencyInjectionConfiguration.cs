@@ -29,12 +29,14 @@ namespace FinanceControl.API.Configurations
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             //Services
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IPaymentMethodService, PaymentMethodService>();
             services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped(typeof(IGenericService<,>), typeof(GenericService<,>));
 
             //Validators
