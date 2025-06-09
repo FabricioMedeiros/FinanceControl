@@ -1,1 +1,93 @@
-<p>transaction-form works!</p>
+<!-- Spinner -->
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-pulse" [fullScreen]="true">
+  <p style="color: white; font-size: 20px;">Carregando...</p>
+</ngx-spinner>
+
+<div class="form-content-container">
+  <!-- Erros -->
+  <div class="alert alert-danger" *ngIf="errors.length > 0">
+    <h3>Atenção</h3>
+    <ul>
+      <li *ngFor="let error of errors">{{ error }}</li>
+    </ul>
+  </div>
+
+  <!-- Card -->
+  <div class="card-container">
+    <div class="card">
+      <div class="card-header">
+        <h3>{{ isEditMode ? 'Editar Lançamento' : 'Cadastro de Lançamento' }}</h3>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="saveTransaction()">
+        <div class="card-body">
+
+          <!-- Data, Valor, Descrição -->
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label for="date">Data</label>
+              <input type="date" id="date" class="form-control" formControlName="date"
+                     [ngClass]="{'is-invalid': displayMessage['date']}" />
+              <div class="text-danger" *ngIf="displayMessage['date']">
+                <p [innerHTML]="displayMessage['date']"></p>
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label for="amount">Valor</label>
+               <input type="text" id="amount" class="form-control small-input" formControlName="amount"
+                                        currencyMask
+                                        [options]="{ allowNegative: false, allowZero: false, prefix: 'R$ ', thousands: '.', decimal: ',', decimalLimit: 2 }"
+                                        [ngClass]="{'is-invalid': displayMessage['amount']}" />
+              <div class="text-danger" *ngIf="displayMessage['amount']">
+                <p [innerHTML]="displayMessage['amount']"></p>
+              </div>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label for="description">Descrição</label>
+              <input type="text" id="description" class="form-control" formControlName="description" />
+            </div>
+          </div>
+
+          <!-- Categoria, Forma de Pagamento -->
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="categoryId">Categoria</label>
+              <select id="categoryId" class="form-control" formControlName="categoryId"
+                      [ngClass]="{'is-invalid': displayMessage['categoryId']}">
+                <option value="">Selecione</option>
+                <option *ngFor="let category of categories" [value]="category.id">
+                  {{ category.name }}
+                </option>
+              </select>
+              <div class="text-danger" *ngIf="displayMessage['categoryId']">
+                <p [innerHTML]="displayMessage['categoryId']"></p>
+              </div>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label for="paymentMethodId">Forma de Pagamento</label>
+              <select id="paymentMethodId" class="form-control" formControlName="paymentMethodId"
+                      [ngClass]="{'is-invalid': displayMessage['paymentMethodId']}">
+                <option value="">Selecione</option>
+                <option *ngFor="let method of paymentMethods" [value]="method.id">
+                  {{ method.name }}
+                </option>
+              </select>
+              <div class="text-danger" *ngIf="displayMessage['paymentMethodId']">
+                <p [innerHTML]="displayMessage['paymentMethodId']"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rodapé do Card -->
+        <div class="card-footer">
+          <button type="submit" class="btn btn-primary-color" [disabled]="!form.valid">Salvar</button>
+          <button type="button" class="btn btn-secondary" (click)="cancel('transaction/list')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
