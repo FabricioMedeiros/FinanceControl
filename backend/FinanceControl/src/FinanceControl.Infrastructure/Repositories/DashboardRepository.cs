@@ -13,14 +13,14 @@ namespace FinanceControl.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Transaction>> GetTransactionsAsync(int year, int? month = null)
+        public async Task<IEnumerable<Transaction>> GetTransactionsByPeriodAsync(Guid userId, int year, int? month = null)
         {
             var query = _context.Transactions
                 .Include(t => t.Category)
                 .Include(t => t.PaymentMethod)
                 .AsQueryable();
 
-            query = query.Where(t => t.Date.Year == year);
+            query = query.Where(t => t.Date.Year == year && t.UserId == userId);
 
             if (month.HasValue)
                 query = query.Where(t => t.Date.Month == month.Value);
@@ -28,5 +28,13 @@ namespace FinanceControl.Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
+        public async Task<IEnumerable<Transaction>> GetTransactionsForPaymentMethodBalanceAsync(Guid userId)
+        {
+            return await _context.Transactions
+                .Include(t => t.Category)
+                .Include(t => t.PaymentMethod)
+                .Where(t => t.UserId == userId)
+                .ToListAsync();
+        }
     }
 }
