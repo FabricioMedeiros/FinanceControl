@@ -61,6 +61,10 @@ export class TransactionFormComponent extends BaseFormComponent<Transaction> imp
         }
       });
     }
+    else{
+      const today = new Date().toISOString().split('T')[0]; 
+      this.form.patchValue({ date: today });
+    }
 
     this.loadCategories();
     this.loadPaymentMethods();
