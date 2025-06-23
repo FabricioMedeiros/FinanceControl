@@ -8,12 +8,10 @@ namespace FinanceControl.Application.Services
     public class DashboardService : IDashboardService
     {
         private readonly IDashboardRepository _dashboardRepository;
-        private readonly INotificator _notificator;
 
-        public DashboardService(IDashboardRepository dashboardRepository, INotificator notificator)
+        public DashboardService(IDashboardRepository dashboardRepository)
         {
             _dashboardRepository = dashboardRepository;
-            _notificator = notificator;
         }
 
         public async Task<DashboardDto> GetDashboardDataAsync(Guid userId, int year, int? month = null)
