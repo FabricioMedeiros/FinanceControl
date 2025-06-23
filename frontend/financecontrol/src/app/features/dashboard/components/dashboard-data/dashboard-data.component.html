@@ -1,0 +1,58 @@
+<!-- Spinner -->
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-pulse" [fullScreen]="true">
+    <p style="color: white; font-size: 20px;">Carregando...</p>
+</ngx-spinner>
+
+<div class="dashboard-container">
+  <!-- Filtros -->
+  <div class="filters">
+
+    <!-- Mês -->
+    <div class="filter-group">
+      <label for="month">Mês:</label>
+      <select id="month" [(ngModel)]="selectedMonth" (ngModelChange)="onMonthChange($event)">
+        <option [ngValue]="null">Todos</option>
+        <option *ngFor="let month of months" [ngValue]="month.value">{{ month.name }}</option>
+      </select>
+    </div>
+
+    <!-- Ano -->
+    <div class="filter-group">
+      <label for="year">Ano:</label>
+      <select id="year" [value]="selectedYear" (change)="onYearChange($event)">
+        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="dashboardData" class="charts">
+    <div class="chart">
+      <h3>Receitas por Categoria</h3>
+      <canvas baseChart [data]="incomeChartData" [options]="chartOptions" chartType="bar">
+      </canvas>
+    </div>
+
+    <div class="chart">
+      <h3>Despesas por Categoria</h3>
+      <canvas baseChart [data]="expenseChartData" [options]="chartOptions" chartType="bar">
+      </canvas>
+    </div>
+
+    <div class="chart">
+      <h3>Despesas por Método de Pagamento</h3>
+      <canvas baseChart [data]="expenseByPaymentMethodChartData" [options]="chartOptions" chartType="bar">
+      </canvas>
+    </div>
+
+
+    <div class="chart">
+      <h3>Saldo por Método de Pagamento</h3>
+      <canvas baseChart [data]="paymentMethodChartData" [options]="chartOptions" chartType="bar">
+      </canvas>
+    </div>
+  </div>
+
+  <div *ngIf="!dashboardData" class="loading">
+    Carregando dados do dashboard...
+  </div>
+</div>
