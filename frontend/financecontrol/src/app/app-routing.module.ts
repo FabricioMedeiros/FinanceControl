@@ -16,6 +16,7 @@ const routes: Routes = [
   { path: 'category', loadChildren: () => import('./features/category/category.module').then(m => m.CategoryModule) },
   { path: 'payment-method', loadChildren: () => import('./features/payment-method/payment-method.module').then(m => m.PaymentMethodModule) },
   { path: 'transaction', loadChildren: () => import('./features/transaction/transaction.module').then(m => m.TransactionModule) },
+  { path: 'dashboard', loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule) },
   { path: '**', component: NotFoundComponent }];
 
 @NgModule({
