@@ -39,8 +39,6 @@ export class PaymentMethodFormComponent extends BaseFormComponent<PaymentMethod>
 
     const resolvedData = this.route.snapshot.data['paymentMethod'];
 
-    console.log(JSON.stringify(resolvedData));
-
     if (resolvedData) {
       this.initializeForm(this.initializeForm({
         data: {
