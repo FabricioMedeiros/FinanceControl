@@ -5,9 +5,9 @@
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  border: 1px solid #ccc;
   padding: 15px;
   margin: 15px;
+  border: 1px solid #ccc;
   border-radius: 6px;
   background-color: #f9f9f9;
   justify-content: flex-start;
@@ -17,9 +17,8 @@
 .filter-item {
   display: flex;
   flex-direction: column;
-  min-width: 160px;
-  flex: 1 1 100%;
-  width: 100%;
+  flex: 1 1 auto; 
+  min-width: 160px; 
 }
 
 /* Tamanho de filtro pequeno */
@@ -29,8 +28,8 @@
 
 /* Tamanho de filtro grande */
 .filter-item.large-field {
-  width: 270px;
-  min-width: 270px;
+  flex: 2 1 auto; 
+  min-width: 240px;
 }
 
 /* Estilização dos elementos de formulário */
@@ -59,7 +58,7 @@
   font-size: 14px;
 }
 
-/* Datepicker personalizado */
+/* Estilização do calendário */
 ::ng-deep .theme-purple .bs-datepicker-head {
   background-color: #820ad1 !important;
   color: white !important;
@@ -71,17 +70,17 @@
   color: white !important;
 }
 
-/* Responsivo: em telas grandes, os filtros ficam em linha */
-@media (min-width: 992px) {
+/* Responsivo: em telas grandes, mantém tudo em linha */
+@media (min-width: 1328px) {
   .filters-container {
     flex-wrap: nowrap;
     justify-content: space-between;
   }
 
   .filter-item {
+    flex: 0 1 auto;
     min-width: 0;
     width: auto;
-    flex: 0 1 auto;
   }
 
   .filter-item.large-field {
@@ -90,5 +89,30 @@
 
   .filter-item.small-field {
     max-width: 150px;
+  }
+}
+
+/* Responsivo: em telas médias e quando o container está menor */
+@media (max-width: 1327px) {
+  .filters-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+  }
+}
+
+/* Responsivo: em telas pequenas, filtros grandes ocupam toda a largura */
+@media (max-width: 768px) {
+  .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-item {
+    width: 100%;
+  }
+
+  .filter-item.large-field {
+    width: 100%;
   }
 }
