@@ -16,22 +16,19 @@ namespace FinanceControl.Application.Services
             _notificator = notificator;
         }
 
-        public async Task<DashboardDto> GetDashboardDataAsync(int year, int? month = null)
+        public async Task<DashboardDto> GetDashboardDataAsync(Guid userId, int year, int? month = null)
         {
-            var transactions = await _dashboardRepository.GetTransactionsAsync(year, month);
+            var periodTransactions = await _dashboardRepository.GetTransactionsByPeriodAsync(userId, year, month);
 
-            var income = transactions
+            var income = periodTransactions
                 .Where(t => t.Category.Type == CategoryType.Income)
                 .ToList();
 
-            var expense = transactions
+            var expense = periodTransactions
                 .Where(t => t.Category.Type == CategoryType.Expense)
                 .ToList();
 
-            var totalIncome = income.Sum(t => t.Amount);
-            var totalExpense = expense.Sum(t => t.Amount);
-
-            var categoryIncome = income
+            var incomeByCategory = income
                 .GroupBy(t => t.Category.Name)
                 .Select(g => new CategoryAmountDto
                 {
@@ -40,7 +37,7 @@ namespace FinanceControl.Application.Services
                 })
                 .ToList();
 
-            var categoryExpense = expense
+            var expenseByCategory = expense
                 .GroupBy(t => t.Category.Name)
                 .Select(g => new CategoryAmountDto
                 {
@@ -49,7 +46,18 @@ namespace FinanceControl.Application.Services
                 })
                 .ToList();
 
-            var paymentMethodBalances = transactions
+            var expensesByPaymentMethod = expense
+                .GroupBy(t => t.PaymentMethod.Name)
+                .Select(g => new PaymentMethodExpenseDto
+                {
+                    PaymentMethod = g.Key,
+                    TotalExpense = g.Sum(t => t.Amount)
+                })
+                .ToList();
+
+            var allTransactions = await _dashboardRepository.GetTransactionsForPaymentMethodBalanceAsync(userId);
+
+            var paymentMethodBalances = allTransactions
                 .GroupBy(t => t.PaymentMethod.Name)
                 .Select(g => new PaymentMethodBalanceDto
                 {
@@ -61,14 +69,10 @@ namespace FinanceControl.Application.Services
 
             return new DashboardDto
             {
-                TotalIncome = totalIncome,
-                TotalExpense = totalExpense,
-                ByCategory = new CategoryBreakdownDto
-                {
-                    Income = categoryIncome,
-                    Expense = categoryExpense
-                },
-                ByPaymentMethod = paymentMethodBalances
+                IncomeByCategory = incomeByCategory,
+                ExpenseByCategory = expenseByCategory,
+                ExpensesByPaymentMethod = expensesByPaymentMethod,
+                PaymentMethodBalances = paymentMethodBalances
             };
         }
     }

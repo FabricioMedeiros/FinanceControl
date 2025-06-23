@@ -4,6 +4,6 @@ namespace FinanceControl.Application.Interfaces
 {
     public interface IDashboardService
     {
-        Task<DashboardDto> GetDashboardDataAsync(int year, int? month = null);
+        Task<DashboardDto> GetDashboardDataAsync(Guid userId, int year, int? month = null);
     }
 }
