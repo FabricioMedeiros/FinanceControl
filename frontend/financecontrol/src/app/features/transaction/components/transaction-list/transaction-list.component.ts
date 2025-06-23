@@ -171,14 +171,6 @@ export class TransactionListComponent extends BaseListComponent<Transaction> imp
     this.loadItems();
   }
 
-  onCategoryChange(): void {
-    this.loadItems();
-  }
-
-  onPaymentMethodChange() {
-    this.loadItems();
-  }
-
   isCurrentRoute(url: string): boolean {
     return url.includes('/transaction');
   }
