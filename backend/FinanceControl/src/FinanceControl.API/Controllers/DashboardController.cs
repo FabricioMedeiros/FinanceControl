@@ -19,7 +19,7 @@ namespace FinanceControl.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetDashboard([FromQuery] int year, [FromQuery] int? month = null)
         {
-            var result = await _dashboardService.GetDashboardDataAsync(year, month);
+            var result = await _dashboardService.GetDashboardDataAsync(Guid.Parse(UserId), year, month);
             return CustomResponse(result);
         }
     }
