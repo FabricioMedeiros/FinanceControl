@@ -2,17 +2,10 @@
 {
     public class DashboardDto
     {
-        public decimal TotalIncome { get; set; }
-        public decimal TotalExpense { get; set; }
-        public decimal Balance => TotalIncome - TotalExpense;
-        public CategoryBreakdownDto ByCategory { get; set; } = new();
-        public IEnumerable<PaymentMethodBalanceDto> ByPaymentMethod { get; set; } = new List<PaymentMethodBalanceDto>();
-    }
-
-    public class CategoryBreakdownDto
-    {
-        public IEnumerable<CategoryAmountDto> Income { get; set; } = new List<CategoryAmountDto>();
-        public IEnumerable<CategoryAmountDto> Expense { get; set; } = new List<CategoryAmountDto>();
+        public IEnumerable<CategoryAmountDto> IncomeByCategory { get; set; } = new List<CategoryAmountDto>();
+        public IEnumerable<CategoryAmountDto> ExpenseByCategory { get; set; } = new List<CategoryAmountDto>();
+        public IEnumerable<PaymentMethodExpenseDto> ExpensesByPaymentMethod { get; set; } = new List<PaymentMethodExpenseDto>();
+        public IEnumerable<PaymentMethodBalanceDto> PaymentMethodBalances { get; set; } = new List<PaymentMethodBalanceDto>();
     }
 
     public class CategoryAmountDto
@@ -21,10 +14,15 @@
         public decimal Amount { get; set; }
     }
 
+    public class PaymentMethodExpenseDto
+    {
+        public string PaymentMethod { get; set; } = string.Empty;
+        public decimal TotalExpense { get; set; }
+    }
+
     public class PaymentMethodBalanceDto
     {
         public string PaymentMethod { get; set; } = string.Empty;
         public decimal Balance { get; set; }
     }
-
 }
