@@ -28,14 +28,27 @@ namespace FinanceControl.Infrastructure.Repositories
         }
 
         public virtual async Task<IEnumerable<TEntity?>> GetAllAsync(
-            Expression<Func<TEntity, bool>>? filter = null)
+            Expression<Func<TEntity, bool>>? filter = null,
+            int? skip = null,
+            int? take = null,
+            params Expression<Func<TEntity, object>>[] includeProperties)
         {
-            IQueryable<TEntity> query = _context.Set<TEntity>();
+            IQueryable<TEntity> query = Query(includeProperties);
 
             if (filter != null)
             {
                 query = query.Where(filter);
-            }                       
+            }
+
+            if (skip.HasValue)
+            {
+                query = query.Skip(skip.Value);
+            }
+
+            if (take.HasValue)
+            {
+                query = query.Take(take.Value);
+            }
 
             return await query.ToListAsync();
         }
@@ -67,6 +80,7 @@ namespace FinanceControl.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
         public async Task<int> SaveChangesAsync()
         {
             return await _context.SaveChangesAsync();
