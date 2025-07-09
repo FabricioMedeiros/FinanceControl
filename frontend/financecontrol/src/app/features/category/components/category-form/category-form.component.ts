@@ -33,7 +33,6 @@ export class CategoryFormComponent extends BaseFormComponent<Category> implement
 
     this.validationMessages = {
       name: { required: 'Informe o nome' },
-      description: { required: 'Informe a descrição' },
       type: { required: 'Informe o tipo' }
     };
 
@@ -58,7 +57,7 @@ export class CategoryFormComponent extends BaseFormComponent<Category> implement
     this.form = this.fb.group({
       id: ['', []],
       name: ['', [Validators.required]],
-      description: ['', [Validators.required]],
+      description: ['', []],
       type: ['', [Validators.required]],
     });
   }
