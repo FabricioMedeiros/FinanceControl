@@ -37,14 +37,14 @@ namespace FinanceControl.Application.Services
             int size = pageSize ?? 10;
             int skip = (page - 1) * size;
 
-            var pagedItems = await _repository.GetAllAsync(filterExpression, skip, size, includes);
+            var (items, totalRecords) = await _repository.GetAllAsync(filterExpression, skip, size, includes);
 
             return new PagedResult<TDto>
             {
                 Page = page,
                 PageSize = size,
-                TotalRecords = pagedItems.Count(),
-                Items = _mapper.Map<IEnumerable<TDto>>(pagedItems)
+                TotalRecords = totalRecords,
+                Items = _mapper.Map<IEnumerable<TDto>>(items)
             };
         }
 

@@ -27,7 +27,7 @@ namespace FinanceControl.Infrastructure.Repositories
             return query;
         }
 
-        public virtual async Task<IEnumerable<TEntity?>> GetAllAsync(
+        public virtual async Task<(IEnumerable<TEntity?> Items, int TotalRecords)> GetAllAsync(
             Expression<Func<TEntity, bool>>? filter = null,
             int? skip = null,
             int? take = null,
@@ -40,6 +40,8 @@ namespace FinanceControl.Infrastructure.Repositories
                 query = query.Where(filter);
             }
 
+            int totalRecords = await query.CountAsync();
+
             if (skip.HasValue)
             {
                 query = query.Skip(skip.Value);
@@ -50,7 +52,9 @@ namespace FinanceControl.Infrastructure.Repositories
                 query = query.Take(take.Value);
             }
 
-            return await query.ToListAsync();
+            var items = await query.ToListAsync();
+
+            return (items, totalRecords);
         }
 
         public virtual async Task<TEntity?> GetByIdAsync(Guid id, params Expression<Func<TEntity, object>>[] includeProperties)

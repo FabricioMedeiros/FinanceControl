@@ -6,7 +6,7 @@ namespace FinanceControl.Domain.Interfaces
     {
         IQueryable<TEntity> Query(params Expression<Func<TEntity, object>>[] includeProperties);
 
-        Task<IEnumerable<TEntity?>> GetAllAsync(
+        Task<(IEnumerable<TEntity?> Items, int TotalRecords)> GetAllAsync(
             Expression<Func<TEntity, bool>>? filter = null,
             int? skip = null,
             int? take = null,
