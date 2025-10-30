@@ -36,7 +36,7 @@ namespace FinanceControl.API.Middlewares
                 success = false,
                 errors = new List<string>
                 {
-                    "Já existe um registro com a mesma chave única especificada. " + sqlEx.Message
+                  "Já existe um registro com os mesmos dados. Verifique e tente novamente."
                 }
             });
         }
