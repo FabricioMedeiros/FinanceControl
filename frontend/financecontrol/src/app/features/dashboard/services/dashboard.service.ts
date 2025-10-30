@@ -11,7 +11,7 @@ export class DashboardService extends BaseService {
     constructor(private http: HttpClient) { super(); }
 
     getDashboardData(year: number, month?: number): Observable<any> {
-        const headers = this.GetAuthHeaderJson();
+        const headers = this.getAuthHeaderJson();
 
         let url = `${this.UrlServiceV1}dashboard?year=${year}`;
         if (month) {

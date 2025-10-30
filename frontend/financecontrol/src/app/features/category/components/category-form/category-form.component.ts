@@ -61,28 +61,23 @@ export class CategoryFormComponent extends BaseFormComponent<Category> implement
       type: ['', [Validators.required]],
     });
   }
-  
+
   saveCategory() {
     if (this.form.dirty && this.form.valid) {
-      this.changesSaved = true;    
+      this.changesSaved = true;
+      this.entity = Object.assign({}, this.form.value);
 
-      const categoryData = Object.fromEntries(
-        Object.entries(this.form.value).filter(([key, value]) => key !== 'id' || (value && value !== ''))
-      ) as unknown as Category;    
+      const request = this.categoryService.save(this.entity);
 
-      if (this.isEditMode) {
-        this.categoryService.updateCategory(categoryData).subscribe({
-          next: () => this.processSuccess('Categoria atualizada com sucesso!', '/category/list'),
-          error: (error) =>  this.processFail(error)
-        });
-      } else {
-        this.categoryService.registerCategory(categoryData).subscribe({
-          next: () => this.processSuccess('Categoria cadastrada com sucesso!', '/category/list'),
-          error: (error) => {
-            this.processFail(error);
-          }
-        });
-      }
+      request.subscribe({
+        next: () => {
+          const msg = this.isEditMode
+            ? 'Categoria atualizada com sucesso!'
+            : 'Categoria cadastrada com sucesso!';
+          this.processSuccess(msg, '/category/list');
+        },
+        error: err => this.processFail(err)
+      });
     }
   }
 }

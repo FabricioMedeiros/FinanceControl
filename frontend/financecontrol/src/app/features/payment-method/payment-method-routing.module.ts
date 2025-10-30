@@ -18,7 +18,7 @@ const routes: Routes = [{
     { path: 'edit/:id', component: PaymentMethodFormComponent, 
       canActivate: [authGuard],  
       canDeactivate: [canDeactivateForm], resolve: {
-      paymentMethod: genericResolver(PaymentMethodService, (service, id) => service.getPaymentMethodById(id))
+      paymentMethod: genericResolver(PaymentMethodService, (service, id) => service.getById(id))
     }},
   ]
 }];

@@ -58,24 +58,19 @@ export class PaymentMethodFormComponent extends BaseFormComponent<PaymentMethod>
   savePaymentMethod() {
     if (this.form.dirty && this.form.valid) {
       this.changesSaved = true;
+      this.entity = Object.assign({}, this.form.value);
 
-      const paymentMethodData = Object.fromEntries(
-        Object.entries(this.form.value).filter(([key, value]) => key !== 'id' || (value && value !== ''))
-      ) as unknown as PaymentMethod;
+      const request = this.paymentMethodService.save(this.entity);
 
-      if (this.isEditMode) {
-        this.paymentMethodService.updatePaymentMethod(paymentMethodData).subscribe({
-          next: () => this.processSuccess('Forma de Pagamento atualizada com sucesso!', '/payment-method/list'),
-          error: (error) => this.processFail(error)
-        });
-      } else {
-        this.paymentMethodService.registerPaymentMethod(paymentMethodData).subscribe({
-          next: () => this.processSuccess('Forma de Pagamento cadastrada com sucesso!', '/payment-method/list'),
-          error: (error) => {
-            this.processFail(error);
-          }
-        });
-      }
+      request.subscribe({
+        next: () => {
+          const msg = this.isEditMode
+            ? 'Forma de Pagamento atualizada com sucesso!'
+            : 'Forma de Pagamento cadastrada com sucesso!';
+          this.processSuccess(msg, '/payment-method/list');
+        },
+        error: err => this.processFail(err)
+      });
     }
   }
 }
