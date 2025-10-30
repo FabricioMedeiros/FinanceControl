@@ -1,32 +1,15 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { catchError, map } from "rxjs/operators";
 
-import { BaseService } from "src/app/core/services/base.service";
+import { GenericCrudService } from "src/app/core/services/generic-crud.service";
 import { Transaction } from "src/app/features/transaction/models/transaction";
+import { catchError, Observable } from "rxjs";
 
 @Injectable()
-export class TransactionService extends BaseService {
+export class TransactionService extends GenericCrudService<Transaction> {
 
-    constructor(private http: HttpClient) { super(); }
-
-    getAll(page?: number, pageSize?: number, field?: string, value?: string): Observable<any> {
-        const headers = this.GetAuthHeaderJson();
-
-        let url = `${this.UrlServiceV1}transaction`;
-
-        if (page !== undefined && pageSize !== undefined) {
-            url += `?pageNumber=${page}&pageSize=${pageSize}`;
-        }
-
-        if (field && value) {
-            url += `${(page !== undefined && pageSize !== undefined) ? '&' : '?'}filters[${field}]=${value}`;
-        }
-
-        return this.http
-            .get<any>(url, headers)
-            .pipe(catchError(super.serviceError));
+    constructor(protected override http: HttpClient) {
+        super(http, 'Transaction', 'transaction');
     }
 
     getTransactionsByPeriod(
@@ -37,7 +20,7 @@ export class TransactionService extends BaseService {
         page?: number,
         pageSize?: number
     ): Observable<any> {
-        const headers = this.GetAuthHeaderJson();
+        const headers = this.getAuthHeaderJson();
 
         let url = `${this.UrlServiceV1}transaction/by-period?startDate=${startDate}&endDate=${endDate}`;
 
@@ -58,60 +41,7 @@ export class TransactionService extends BaseService {
         );
     }
 
-    getTransactionById(id: string): Observable<Transaction> {
-        const headers = this.GetAuthHeaderJson();
-
-        return this.http
-            .get<Transaction>(`${this.UrlServiceV1}transaction/${id}`, headers)
-            .pipe(catchError(super.serviceError));
-    }
-
-    registerTransaction(transaction: Transaction): Observable<Transaction> {
-        const headers = this.GetAuthHeaderJson();
-
-        return this.http
-            .post<Transaction>(`${this.UrlServiceV1}transaction`, transaction, headers)
-            .pipe(
-                map(this.extractData),
-                catchError(this.serviceError)
-            );
-    }
-
-    updateTransaction(transaction: Transaction): Observable<Transaction> {
-        const headers = this.GetAuthHeaderJson();
-        const httpOptions = {
-            headers: headers
-        };
-
-        return this.http
-            .put<Transaction>(`${this.UrlServiceV1}transaction/${transaction.id}`, transaction, headers)
-            .pipe(
-                map(this.extractData),
-                catchError(this.serviceError)
-            );
-    }
-
-    delete(id: string): Observable<any> {
-        const headers = this.GetAuthHeaderJson();
-
-        return this.http
-            .delete(`${this.UrlServiceV1}transaction/${id}`, headers)
-            .pipe(catchError(this.serviceError));
-    }
-
-    saveLocalCurrentPageList(page: number): void {
-        localStorage.setItem('currentPageTransactionList', page.toString());
-    }
-
-    getLocalCurrentPageList(): string {
-        return localStorage.getItem('currentPageTransactionList') || '';
-    }
-
-    clearLocalCurrentPageList(): void {
-        localStorage.removeItem('currentPageTransactionList');
-    }
-
-    saveLocalSearchTerm(pageSize: number, category: string, paymentMethod: string, startDate: Date, endDate: Date): void {
+    saveTransactionSearchFilters(pageSize: number, category: string, paymentMethod: string, startDate: Date, endDate: Date): void {
         if (pageSize) localStorage.setItem('pageSizeTransactionList', pageSize.toString());
         if (startDate) localStorage.setItem('startDateFilterTransactionList', startDate.toString());
         if (endDate) localStorage.setItem('endDateFilterTransactionList', endDate.toString());
@@ -119,7 +49,7 @@ export class TransactionService extends BaseService {
         if (paymentMethod) localStorage.setItem('paymentMethodFilterTransactionList', paymentMethod);
     }
 
-    getLocalSearchTerm(): { pageSize?: number, category?: string, paymentMethod?: string, startDate?: Date, endDate?: Date } {
+    getTransactionSearchFilters(): { pageSize?: number, category?: string, paymentMethod?: string, startDate?: Date, endDate?: Date } {
         const pageSizeValue = localStorage.getItem('pageSizeTransactionList');
         const categoryValue = localStorage.getItem('categoryFilterTransactionList');
         const paymentMethodValue = localStorage.getItem('paymentMethodFilterTransactionList');
@@ -135,7 +65,7 @@ export class TransactionService extends BaseService {
         };
     }
 
-    clearLocalSearchTerm(): void {
+    clearTransactionSearchFilters(): void {
         localStorage.removeItem('pageSizeTransactionList');
         localStorage.removeItem('startDateFilterTransactionList');
         localStorage.removeItem('endDateFilterTransactionList');
