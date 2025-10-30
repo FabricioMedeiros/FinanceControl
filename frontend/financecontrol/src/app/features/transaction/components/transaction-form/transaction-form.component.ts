@@ -20,9 +20,9 @@ import { PaymentMethodService } from 'src/app/shared/services/payment-method.ser
   styleUrls: ['./transaction-form.component.css']
 })
 export class TransactionFormComponent extends BaseFormComponent<Transaction> implements OnInit {
-  categories: Category[] = []; 
+  categories: Category[] = [];
   paymentMethods: PaymentMethod[] = [];
-  
+
   constructor(
     fb: FormBuilder,
     router: Router,
@@ -55,14 +55,14 @@ export class TransactionFormComponent extends BaseFormComponent<Transaction> imp
         data: {
           ...resolvedData?.data,
           date: new Date(resolvedData.data.date).toISOString().split('T')[0],
-          amount: resolvedData.data.amount, 
+          amount: resolvedData.data.amount,
           categoryId: resolvedData.data.category.id,
           paymentMethodId: resolvedData.data.paymentMethod.id
         }
       });
     }
-    else{
-      const today = new Date().toISOString().split('T')[0]; 
+    else {
+      const today = new Date().toISOString().split('T')[0];
       this.form.patchValue({ date: today });
     }
 
@@ -74,7 +74,7 @@ export class TransactionFormComponent extends BaseFormComponent<Transaction> imp
     this.form = this.fb.group({
       id: ['', []],
       date: ['', [Validators.required]],
-      amount: ['', [Validators.required]], 
+      amount: ['', [Validators.required]],
       description: ['', []],
       categoryId: ['', [Validators.required]],
       paymentMethodId: ['', [Validators.required]]
@@ -84,11 +84,16 @@ export class TransactionFormComponent extends BaseFormComponent<Transaction> imp
   loadCategories(): void {
     this.categoryService.getAll().subscribe({
       next: (response) => {
-        this.categories = response?.data?.items || [];
+        if (response && response.data) {
+          this.categories = response.data.items.sort((a: Category, b: Category) =>
+            a.name.localeCompare(b.name)
+          );
+        } else {
+          this.categories = [];
+        }
       },
       error: (err) => {
-        this.errors.push('Erro ao carregar categorias');
-        console.error('Erro ao carregar categorias', err);
+        console.error('Erro ao carregar as categorias', err);
       }
     });
   }
@@ -96,11 +101,16 @@ export class TransactionFormComponent extends BaseFormComponent<Transaction> imp
   loadPaymentMethods(): void {
     this.paymentMethodService.getAll().subscribe({
       next: (response) => {
-        this.paymentMethods = response?.data?.items || [];
+        if (response && response.data) {
+          this.paymentMethods = response.data.items.sort((a: PaymentMethod, b: PaymentMethod) =>
+            a.name.localeCompare(b.name)
+          );
+        } else {
+          this.paymentMethods = [];
+        }
       },
       error: (err) => {
-        this.errors.push('Erro ao carregar formas de pagamento');
-        console.error('Erro ao carregar formas de pagamento', err);
+        console.error('Erro ao carregar as formas de pagamento', err);
       }
     });
   }
@@ -120,17 +130,15 @@ export class TransactionFormComponent extends BaseFormComponent<Transaction> imp
         paymentMethod: { id: formValues.paymentMethodId }
       } as Transaction;
 
-      if (this.isEditMode) {
-        this.transactionService.updateTransaction(transactionData).subscribe({
-          next: () => this.processSuccess('Lançamento atualizado com sucesso!', '/transaction/list'),
-          error: (error) => this.processFail(error)
-        });
-      } else {
-        this.transactionService.registerTransaction(transactionData).subscribe({
-          next: () => this.processSuccess('Lançamento cadastrado com sucesso!', '/transaction/list'),
-          error: (error) => this.processFail(error)
-        });
-      }
+      this.transactionService.save(transactionData).subscribe({
+        next: () => {
+          const msg = this.isEditMode
+            ? 'Lançamento atualizado com sucesso!'
+            : 'Lançamento cadastrado com sucesso!';
+          this.processSuccess(msg, '/transaction/list');
+        },
+        error: (error) => this.processFail(error)
+      });
     }
   }
 }

@@ -1,6 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd, Event } from '@angular/router';
+import { filter, map } from 'rxjs/operators';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -40,6 +41,17 @@ export class TransactionListComponent extends BaseListComponent<Transaction> imp
     modalService: BsModalService) {
     super(transactionService, router, toastr, spinner, modalService);
 
+    this.router.events.pipe(
+      filter((e: Event): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e: NavigationEnd) => e)
+    ).subscribe(event => {
+      if (!this.isCurrentRoute(event.url)) {
+        this.transactionService.clearLocalCurrentPageList();
+        this.transactionService.clearTransactionSearchFilters();
+      }
+    });
+
+
     const today = new Date();
     this.startDate = new Date(today.getFullYear(), today.getMonth(), 1);
     this.endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -53,7 +65,7 @@ export class TransactionListComponent extends BaseListComponent<Transaction> imp
 
     if (storedPage) this.currentPage = parseInt(storedPage, 10);
 
-    const filters = this.transactionService.getLocalSearchTerm();
+    const filters = this.transactionService.getTransactionSearchFilters();
 
     if (filters) {
       this.pageSize = filters.pageSize ?? this.pageSize;
@@ -76,6 +88,7 @@ export class TransactionListComponent extends BaseListComponent<Transaction> imp
         this.spinner.hide();
         return;
       }
+
 
       const formattedStart = format(this.startDate, 'MM/dd/yyyy');
       const formattedEnd = format(this.endDate, 'MM/dd/yyyy');
@@ -125,7 +138,7 @@ export class TransactionListComponent extends BaseListComponent<Transaction> imp
 
   override onSearch(): void {
     this.currentPage = 1;
-    this.transactionService.saveLocalSearchTerm(this.pageSize,
+    this.transactionService.saveTransactionSearchFilters(this.pageSize,
       this.selectedCategory,
       this.selectedPaymentMethod,
       this.startDate,
@@ -138,13 +151,15 @@ export class TransactionListComponent extends BaseListComponent<Transaction> imp
     this.categoryService.getAll().subscribe({
       next: (response) => {
         if (response && response.data) {
-          this.categories = response.data.items;
+          this.categories = response.data.items.sort((a: Category, b: Category) =>
+            a.name.localeCompare(b.name)
+          );
         } else {
           this.categories = [];
         }
       },
       error: (err) => {
-        this.errorMessage = 'Erro ao carregar as catgorias';
+        this.errorMessage = 'Erro ao carregar as categorias';
         console.error('Erro ao carregar as categorias', err);
       }
     });
@@ -154,7 +169,9 @@ export class TransactionListComponent extends BaseListComponent<Transaction> imp
     this.paymentMethodService.getAll().subscribe({
       next: (response) => {
         if (response && response.data) {
-          this.paymentMethods = response.data.items;
+          this.paymentMethods = response.data.items.sort((a: PaymentMethod, b: PaymentMethod) =>
+            a.name.localeCompare(b.name)
+          );
         } else {
           this.paymentMethods = [];
         }
