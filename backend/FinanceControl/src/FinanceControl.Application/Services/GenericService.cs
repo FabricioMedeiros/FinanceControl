@@ -33,16 +33,21 @@ namespace FinanceControl.Application.Services
         {
             var filterExpression = ApplyFilters(filters, userId);
 
-            int page = pageNumber ?? 1;
-            int size = pageSize ?? 10;
-            int skip = (page - 1) * size;
+            int? skip = null;
+            int? size = null;
+
+            if (pageNumber.HasValue && pageSize.HasValue)
+            {
+                skip = (pageNumber.Value - 1) * pageSize.Value;
+                size = pageSize.Value;
+            }
 
             var (items, totalRecords) = await _repository.GetAllAsync(filterExpression, skip, size, includes);
 
             return new PagedResult<TDto>
             {
-                Page = page,
-                PageSize = size,
+                Page = pageNumber ?? 1,
+                PageSize = pageSize ?? totalRecords,
                 TotalRecords = totalRecords,
                 Items = _mapper.Map<IEnumerable<TDto>>(items)
             };
