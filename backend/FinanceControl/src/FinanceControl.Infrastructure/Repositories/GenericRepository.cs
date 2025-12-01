@@ -15,51 +15,39 @@ namespace FinanceControl.Infrastructure.Repositories
             _context = context;
         }
 
-        public virtual IQueryable<TEntity> Query(params Expression<Func<TEntity, object>>[] includeProperties)
+        protected IQueryable<TEntity> ApplyIncludes(
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes)
         {
             IQueryable<TEntity> query = _context.Set<TEntity>();
-
-            foreach (var includeProperty in includeProperties)
-            {
-                query = query.Include(includeProperty);
-            }
-
-            return query;
+            return includes != null ? includes(query) : query;
         }
 
-        public virtual async Task<(IEnumerable<TEntity?> Items, int TotalRecords)> GetAllAsync(
+        public async Task<(IEnumerable<TEntity> Items, int TotalRecords)> GetAllAsync(
             Expression<Func<TEntity, bool>>? filter = null,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null,
             int? skip = null,
-            int? take = null,
-            params Expression<Func<TEntity, object>>[] includeProperties)
+            int? take = null)
         {
-            IQueryable<TEntity> query = Query(includeProperties);
+            IQueryable<TEntity> query = ApplyIncludes(includes);
 
             if (filter != null)
-            {
                 query = query.Where(filter);
-            }
 
             int totalRecords = await query.CountAsync();
 
-            if (skip.HasValue)
-            {
-                query = query.Skip(skip.Value);
-            }
-
-            if (take.HasValue)
-            {
-                query = query.Take(take.Value);
-            }
+            if (skip.HasValue) query = query.Skip(skip.Value);
+            if (take.HasValue) query = query.Take(take.Value);
 
             var items = await query.ToListAsync();
-
             return (items, totalRecords);
         }
 
-        public virtual async Task<TEntity?> GetByIdAsync(Guid id, params Expression<Func<TEntity, object>>[] includeProperties)
+        public async Task<TEntity?> GetByIdAsync(
+            Guid id,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null)
         {
-            return await Query(includeProperties).FirstOrDefaultAsync(e => e.Id == id);
+            IQueryable<TEntity> query = ApplyIncludes(includes);
+            return await query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<TEntity> AddAsync(TEntity entity)
@@ -88,6 +76,18 @@ namespace FinanceControl.Infrastructure.Repositories
         public async Task<int> SaveChangesAsync()
         {
             return await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await _context.Set<TEntity>().AnyAsync(predicate);
+        }
+
+        public async Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null)
+        {
+            return predicate == null
+                ? await _context.Set<TEntity>().CountAsync()
+                : await _context.Set<TEntity>().CountAsync(predicate);
         }
     }
 }

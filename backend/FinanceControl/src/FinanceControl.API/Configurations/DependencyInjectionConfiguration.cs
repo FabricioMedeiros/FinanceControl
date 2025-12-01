@@ -26,11 +26,12 @@ namespace FinanceControl.API.Configurations
             services.AddAutoMapper(typeof(MappingProfile));
 
             //Repositories
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
-            services.AddScoped<IDashboardRepository, DashboardRepository>();
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IDashboardRepository, DashboardRepository>();            
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             //Services
             services.AddScoped<ICategoryService, CategoryService>();

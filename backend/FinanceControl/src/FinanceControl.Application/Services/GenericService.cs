@@ -3,6 +3,7 @@ using FinanceControl.Application.Interfaces;
 using FinanceControl.Application.Utils;
 using FinanceControl.Domain.Entities;
 using FinanceControl.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace FinanceControl.Application.Services
@@ -11,15 +12,18 @@ namespace FinanceControl.Application.Services
         where TEntity : BaseEntity
         where TDto : class
     {
+        protected readonly IUnitOfWork _uow;
         protected readonly IGenericRepository<TEntity> _repository;
         protected readonly IMapper _mapper;
 
         public GenericService(
+            IUnitOfWork uow,
             IGenericRepository<TEntity> repository,
             IMapper mapper,
             INotificator notificator)
             : base(notificator)
         {
+            _uow = uow;
             _repository = repository;
             _mapper = mapper;
         }
@@ -29,7 +33,7 @@ namespace FinanceControl.Application.Services
             int? pageNumber = null,
             int? pageSize = null,
             Guid? userId = null,
-            params Expression<Func<TEntity, object>>[] includes)
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null)
         {
             var filterExpression = ApplyFilters(filters, userId);
 
@@ -42,7 +46,7 @@ namespace FinanceControl.Application.Services
                 size = pageSize.Value;
             }
 
-            var (items, totalRecords) = await _repository.GetAllAsync(filterExpression, skip, size, includes);
+            var (items, totalRecords) = await _repository.GetAllAsync(filterExpression, includes, skip, size);
 
             return new PagedResult<TDto>
             {
@@ -53,44 +57,66 @@ namespace FinanceControl.Application.Services
             };
         }
 
-        public virtual async Task<TDto?> GetByIdAsync(Guid id, params Expression<Func<TEntity, object>>[] includes)
+        public virtual async Task<TDto?> GetByIdAsync(Guid id, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null)
         {
             var entity = await _repository.GetByIdAsync(id, includes);
             return _mapper.Map<TDto>(entity);
         }
 
-        public virtual async Task<TEntity?> GetByIdAsync(Guid id, bool returnEntity, params Expression<Func<TEntity, object>>[] includeProperties)
+        public virtual async Task<TEntity?> GetByIdAsync(Guid id, bool returnEntity, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null)
         {
-            return await _repository.GetByIdAsync(id, includeProperties);
+            return await _repository.GetByIdAsync(id, includes);
         }
 
-        public virtual async Task<TDto?> AddAsync(TDto dto)
+        public virtual async Task<TDto?> AddAsync(TDto dto, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null)
         {
             var entity = _mapper.Map<TEntity>(dto);
-            var createdEntity = await _repository.AddAsync(entity);
-            return _mapper.Map<TDto>(createdEntity);
+            await _repository.AddAsync(entity);
+            await _uow.CommitAsync();
+
+            var fullEntity = await _repository.GetByIdAsync(entity.Id, includes);
+            return _mapper.Map<TDto>(fullEntity);
         }
 
-        public virtual async Task<TDto?> AddAsync(TEntity entity)
+        public virtual async Task<TDto?> AddAsync(TEntity entity, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null)
         {
-            var createdEntity = await _repository.AddAsync(entity);
-            return _mapper.Map<TDto>(createdEntity);
+            await _repository.AddAsync(entity);
+            await _uow.CommitAsync();
+
+            var fullEntity = await _repository.GetByIdAsync(entity.Id, includes);
+            return _mapper.Map<TDto>(fullEntity);
         }
 
         public virtual async Task UpdateAsync(TDto dto)
         {
             var entity = _mapper.Map<TEntity>(dto);
             await _repository.UpdateAsync(entity);
+            await _uow.CommitAsync();
         }
 
         public virtual async Task UpdateAsync(TEntity entity)
         {
             await _repository.UpdateAsync(entity);
+            await _uow.CommitAsync();
         }
 
         public async Task DeleteAsync(Guid id)
         {
             await _repository.DeleteAsync(id);
+
+            try
+            {
+                await _uow.CommitAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var message = ex.InnerException?.Message ?? ex.Message;
+
+                if (message.Contains("REFERENCE constraint"))
+                    Notify("Não é possível excluir, existem registros vinculados.");
+                else
+                    Notify("Erro inesperado ao processar a operação.");
+            }
         }
 
         private static Expression<Func<TEntity, bool>> ApplyFilters(Dictionary<string, string>? filters, Guid? userId)

@@ -9,10 +9,11 @@ namespace FinanceControl.Application.Services
     public class CategoryService : GenericService<Category, CategoryDto>, ICategoryService
     {
         public CategoryService(
+            IUnitOfWork uow,
             IGenericRepository<Category> repository,
             IMapper mapper,
             INotificator notificator)
-            : base(repository, mapper, notificator)
+            : base(uow, repository, mapper, notificator)
         {
         }
     }

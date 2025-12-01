@@ -6,7 +6,9 @@ using FinanceControl.Application.Validators;
 using FinanceControl.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Numerics;
 
 namespace FinanceControl.API.Controllers
 {
@@ -30,11 +32,7 @@ namespace FinanceControl.API.Controllers
                                                                      pageNumber,
                                                                      pageSize,
                                                                      Guid.Parse(UserId),
-                                                                     includes: new Expression<Func<Transaction, object>>[]
-                                                                     {
-                                                                        x => x.Category,
-                                                                        x => x.PaymentMethod
-                                                                     });
+                                                                     includes: IncludeTransactionRelations());
 
             return CustomResponse(transactions);
         }
@@ -58,11 +56,7 @@ namespace FinanceControl.API.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
             var transaction = await _transactionService.GetByIdAsync(id,
-                includes: new Expression<Func<Transaction, object>>[]
-                {
-                  x => x.Category,
-                  x => x.PaymentMethod
-                });
+                includes: IncludeTransactionRelations());
 
             if (transaction == null) return NotFound();
 
@@ -111,6 +105,12 @@ namespace FinanceControl.API.Controllers
 
             await _transactionService.DeleteAsync(id);
             return CustomResponse();
+        }
+
+        private static Func<IQueryable<Transaction>, IQueryable<Transaction>> IncludeTransactionRelations()
+        {
+            return query => query.Include(t => t.Category)
+                                 .Include(t => t.PaymentMethod);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using FinanceControl.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace FinanceControl.Application.Interfaces
 {
@@ -7,13 +6,34 @@ namespace FinanceControl.Application.Interfaces
         where TEntity : BaseEntity
         where TDto : class
     {
-        Task<PagedResult<TDto>> GetAllAsync(Dictionary<string, string>? filters, int? pageNumber = null, int? pageSize = null, Guid? userId = null, params Expression<Func<TEntity, object>>[] includes);
-        Task<TDto?> GetByIdAsync(Guid id, params Expression<Func<TEntity, object>>[] includes);
-        Task<TEntity?> GetByIdAsync(Guid id, bool returnEntity, params Expression<Func<TEntity, object>>[] includeProperties);
-        Task<TDto?> AddAsync(TDto dto);
-        Task<TDto?> AddAsync(TEntity entity);
+        Task<PagedResult<TDto>> GetAllAsync(
+            Dictionary<string, string>? filters,
+            int? pageNumber = null,
+            int? pageSize = null,
+            Guid? userId = null,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null);
+
+        Task<TDto?> GetByIdAsync(
+            Guid id,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null);
+
+        Task<TEntity?> GetByIdAsync(
+            Guid id,
+            bool returnEntity,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null);
+
+        Task<TDto?> AddAsync(
+            TDto dto,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null);
+
+        Task<TDto?> AddAsync(
+            TEntity entity,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null);
+
         Task UpdateAsync(TDto dto);
+
         Task UpdateAsync(TEntity entity);
+
         Task DeleteAsync(Guid id);
     }
 }

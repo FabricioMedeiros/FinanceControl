@@ -4,6 +4,7 @@ using FinanceControl.Application.Interfaces;
 using FinanceControl.Domain.Entities;
 using FinanceControl.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace FinanceControl.Application.Services
 {
@@ -11,48 +12,53 @@ namespace FinanceControl.Application.Services
     {
         private readonly ITransactionRepository _transactionRepository;
         public TransactionService(
+            IUnitOfWork uow,
             ITransactionRepository transactionRepository,
             IMapper mapper,
             INotificator notificator)
-            : base(transactionRepository, mapper, notificator)
+            : base(uow, transactionRepository, mapper, notificator)
         {
             _transactionRepository = transactionRepository;
         }
 
-        public async Task<PagedResult<TransactionDto>> GetTransactionsByPeriodAsync(
-                          DateTime startDate,
-                          DateTime endDate,
-                          Guid? categoryId = null,
-                          Guid? paymentMethodId = null,
-                          int? pageNumber = null,
-                          int? pageSize = null)
-        {
-            var query = _transactionRepository.Query()
-                .Include(t => t.Category)
-                .Include(t => t.PaymentMethod)
-                .Where(t => t.Date >= startDate && t.Date <= endDate);
+    public async Task<PagedResult<TransactionDto>> GetTransactionsByPeriodAsync(
+        DateTime startDate,
+        DateTime endDate,
+        Guid? categoryId = null,
+        Guid? paymentMethodId = null,
+        int? pageNumber = null,
+        int? pageSize = null)
+     {
+            Expression<Func<Transaction, bool>> filter = t =>
+                t.Date >= startDate && t.Date <= endDate &&
+                (!categoryId.HasValue || t.CategoryId == categoryId.Value) &&
+                (!paymentMethodId.HasValue || t.PaymentMethodId == paymentMethodId.Value);
 
-            if (categoryId.HasValue)
+            int? skip = null;
+            int? take = null;
+            if (pageNumber.HasValue && pageSize.HasValue)
             {
-                query = query.Where(t => t.CategoryId == categoryId.Value);
+                skip = (pageNumber.Value - 1) * pageSize.Value;
+                take = pageSize.Value;
             }
 
-            if (paymentMethodId.HasValue)
-            {
-                query = query.Where(t => t.PaymentMethodId == paymentMethodId.Value);
-            }
+            Func<IQueryable<Transaction>, IQueryable<Transaction>> includes = q =>
+                q.Include(t => t.Category)
+                 .Include(t => t.PaymentMethod);
 
-            var totalCount = await query.CountAsync();
-            var transactions = await query.Skip((pageNumber - 1) * pageSize ?? 0)
-                                          .Take(pageSize ?? totalCount)
-                                          .ToListAsync();
+            var (items, totalRecords) = await _transactionRepository.GetAllAsync(
+                filter: filter,
+                includes: includes,
+                skip: skip,
+                take: take
+            );
 
             return new PagedResult<TransactionDto>
             {
                 Page = pageNumber ?? 1,
-                PageSize = pageSize ?? totalCount,
-                TotalRecords = totalCount,
-                Items = _mapper.Map<List<TransactionDto>>(transactions)
+                PageSize = pageSize ?? totalRecords,
+                TotalRecords = totalRecords,
+                Items = _mapper.Map<List<TransactionDto>>(items)
             };
         }
     }
