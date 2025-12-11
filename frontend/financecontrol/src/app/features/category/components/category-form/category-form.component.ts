@@ -45,11 +45,11 @@ export class CategoryFormComponent extends BaseFormComponent<Category> implement
     const resolvedData = this.route.snapshot.data['category'];
 
     if (resolvedData) {
-      this.initializeForm(this.initializeForm({
+      this.initializeForm({
         data: {
           ...resolvedData?.data,
         }
-      }));
+      });
     }
   }
 

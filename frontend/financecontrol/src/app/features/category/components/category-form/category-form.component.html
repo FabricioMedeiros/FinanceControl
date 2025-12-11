@@ -60,7 +60,7 @@
 
                 <div class="card-footer">
                     <!-- Botões de Ação -->
-                    <button type="submit" class="btn btn-primary-color" [disabled]="!form.valid">Salvar</button>
+                    <button type="submit" class="btn btn-primary-color" [disabled]="!form.valid || !form.dirty">Salvar</button>
                     <button type="button" class="btn btn-secondary" (click)="cancel('category/list')">Cancelar</button>
                 </div>
             </form>

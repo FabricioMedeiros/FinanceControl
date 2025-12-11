@@ -68,6 +68,7 @@ export abstract class BaseListComponent<T> implements OnInit {
   }
 
   processLoadSuccess(response: any) {
+    this.errorMessage = '';
     this.items = response.data.items;
     this.currentPage = response.data.page;
     this.totalPages = Math.ceil(response.data.totalRecords / response.data.pageSize);

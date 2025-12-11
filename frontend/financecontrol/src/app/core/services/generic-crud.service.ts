@@ -40,8 +40,6 @@ export abstract class GenericCrudService<TModel> extends BaseService {
 }
 
     update(id: number, model: any): Observable<TModel | void> {
-        console.log('url: '+ this.apiUrl);
-        console.log('obj: '+ JSON.stringify(model));
         return this.http.put<TModel>(`${this.apiUrl}/${id}`, model, this.getAuthHeaderJson())
             .pipe(
                 map(res => this.extractData(res)),
