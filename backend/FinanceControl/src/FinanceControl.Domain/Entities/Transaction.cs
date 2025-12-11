@@ -8,7 +8,6 @@
         public Guid CategoryId { get; set; }
         public Category Category { get; set; }  
         public Guid PaymentMethodId { get; set; }
-        public PaymentMethod PaymentMethod { get; set; } 
-        public Guid UserId { get; set; }  
+        public PaymentMethod PaymentMethod { get; set; }
     }
 }

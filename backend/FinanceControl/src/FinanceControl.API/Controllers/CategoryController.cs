@@ -1,9 +1,10 @@
-﻿using AutoMapper;
-using FinanceControl.API.Extensions;
+﻿using FinanceControl.API.Extensions;
 using FinanceControl.Application.DTOs;
+using FinanceControl.Application.Features.Categories.Commands;
+using FinanceControl.Application.Features.Categories.Queries;
 using FinanceControl.Application.Interfaces;
 using FinanceControl.Application.Validators;
-using FinanceControl.Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,41 +14,41 @@ namespace FinanceControl.API.Controllers
     [Route("api/[controller]")]
     public class CategoryController : MainController
     {
-        readonly ICategoryService _categoryService;
-        readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public CategoryController(INotificator notificator, ICategoryService categoryService, IMapper mapper) : base(notificator)
+        public CategoryController(
+            IMediator mediator,
+            INotificator notificator) : base(notificator)
         {
-            _categoryService = categoryService;
-            _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] Dictionary<string, string>? filters, [FromQuery] int? pageNumber = null, [FromQuery] int? pageSize = null)
         {
-            var categories = await _categoryService.GetAllAsync(filters, pageNumber, pageSize, Guid.Parse(UserId));
-            return CustomResponse(categories);
+            var result = await _mediator.Send(new GetAllCategoriesQuery(filters,
+                                                                        pageNumber,
+                                                                        pageSize));
+            return CustomResponse(result);
         }
 
         [HttpGet("{id:Guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var category = await _categoryService.GetByIdAsync(id);
+            var result = await _mediator.Send(new GetCategoryByIdQuery(id));
 
-            if (category == null) return NotFound();
+            if (result == null) return NotFound();
 
-            return CustomResponse(category);
+            return CustomResponse(result);
         }
 
         [HttpPost]
         [ValidationContext(typeof(CategoryCreateValidator))]
         public async Task<IActionResult> Create([FromBody] CategoryDto categoryDto)
         {
-            var category = _mapper.Map<Category>(categoryDto);
-            category.UserId = Guid.Parse(UserId);
+            var result = await _mediator.Send(new CreateCategoryCommand(categoryDto));
 
-            var createdCategory = await _categoryService.AddAsync(category);
-            return CustomResponse(createdCategory);
+            return CustomResponse(result);
         }
 
         [HttpPut("{id:Guid}")]
@@ -60,26 +61,14 @@ namespace FinanceControl.API.Controllers
                 return CustomResponse();
             }
 
-            var category = await _categoryService.GetByIdAsync(categoryDto.Id ?? Guid.Empty, true);
-
-            if (category == null)
-                return NotFound();
-
-            _mapper.Map(categoryDto, category);
-
-            await _categoryService.UpdateAsync(category);
-
-            return CustomResponse(category);
+            await _mediator.Send(new UpdateCategoryCommand(categoryDto));
+            return CustomResponse();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var category = await _categoryService.GetByIdAsync(id);
-
-            if (category == null) return NotFound();
-
-            await _categoryService.DeleteAsync(id);
+            await _mediator.Send(new DeleteCategoryCommand(id));
             return CustomResponse();
         }
     }

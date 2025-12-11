@@ -6,7 +6,6 @@ namespace FinanceControl.Domain.Entities
     {
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public CategoryType Type { get; set; } 
-        public Guid UserId { get; set; }  
+        public CategoryType Type { get; set; }  
     }
 }

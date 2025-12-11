@@ -1,9 +1,10 @@
-﻿using AutoMapper;
-using FinanceControl.API.Extensions;
+﻿using FinanceControl.API.Extensions;
 using FinanceControl.Application.DTOs;
+using FinanceControl.Application.Features.PaymentMethods.Commands;
+using FinanceControl.Application.Features.PaymentMethods.Queries;
 using FinanceControl.Application.Interfaces;
 using FinanceControl.Application.Validators;
-using FinanceControl.Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,41 +14,41 @@ namespace FinanceControl.API.Controllers
     [Route("api/[controller]")]
     public class PaymentMethodController : MainController
     {
-        private readonly IPaymentMethodService _paymentMethodService;
-        private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public PaymentMethodController(IPaymentMethodService paymentMethodService, IMapper mapper, INotificator notificator) : base(notificator)
+        public PaymentMethodController(
+            IMediator mediator,
+            INotificator notificator) : base(notificator)
         {
-            _paymentMethodService = paymentMethodService;
-            _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] Dictionary<string, string>? filters, [FromQuery] int? pageNumber = null, [FromQuery] int? pageSize = null)
         {
-            var paymentMethods = await _paymentMethodService.GetAllAsync(filters, pageNumber, pageSize, Guid.Parse(UserId));
-            return CustomResponse(paymentMethods);
+            var result = await _mediator.Send(new GetAllPaymentMethodsQuery(filters,
+                                                                            pageNumber,
+                                                                            pageSize));
+            return CustomResponse(result);
         }
 
         [HttpGet("{id:Guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var paymentMethod = await _paymentMethodService.GetByIdAsync(id);
+            var result = await _mediator.Send(new GetPaymentMethodByIdQuery(id));
 
-            if (paymentMethod == null) return NotFound();
+            if (result == null) return NotFound();
 
-            return CustomResponse(paymentMethod);
+            return CustomResponse(result);
         }
 
         [HttpPost]
         [ValidationContext(typeof(PaymentMethodCreateValidator))]
         public async Task<IActionResult> Create([FromBody] PaymentMethodDto paymentMethodDto)
         {
-            var paymentMethod = _mapper.Map<PaymentMethod>(paymentMethodDto);
-            paymentMethod.UserId = Guid.Parse(UserId);
+            var result = await _mediator.Send(new CreatePaymentMethodCommand(paymentMethodDto));
 
-            var createdPaymentMethod = await _paymentMethodService.AddAsync(paymentMethod);
-            return CustomResponse(createdPaymentMethod);
+            return CustomResponse(result);
         }
 
         [HttpPut("{id:Guid}")]
@@ -60,26 +61,14 @@ namespace FinanceControl.API.Controllers
                 return CustomResponse();
             }
 
-            var paymentMethod = await _paymentMethodService.GetByIdAsync(paymentMethodDto.Id ?? Guid.Empty, true);
-
-            if (paymentMethod == null)
-                return NotFound();
-
-            _mapper.Map(paymentMethodDto, paymentMethod);
-
-            await _paymentMethodService.UpdateAsync(paymentMethod);
-
-            return CustomResponse(paymentMethod);
+            await _mediator.Send(new UpdatePaymentMethodCommand(paymentMethodDto));
+            return CustomResponse();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var category = await _paymentMethodService.GetByIdAsync(id);
-
-            if (category == null) return NotFound();
-
-            await _paymentMethodService.DeleteAsync(id);
+            await _mediator.Send(new DeletePaymentMethodCommand(id));
             return CustomResponse();
         }
     }

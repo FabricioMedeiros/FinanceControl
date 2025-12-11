@@ -3,6 +3,7 @@ using FinanceControl.Application.DTOs;
 using FinanceControl.Application.Interfaces;
 using FinanceControl.Domain.Entities;
 using FinanceControl.Domain.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -15,8 +16,9 @@ namespace FinanceControl.Application.Services
             IUnitOfWork uow,
             ITransactionRepository transactionRepository,
             IMapper mapper,
-            INotificator notificator)
-            : base(uow, transactionRepository, mapper, notificator)
+            INotificator notificator,
+            IHttpContextAccessor httpContextAccessor)
+            : base(uow, transactionRepository, mapper, notificator, httpContextAccessor)
         {
             _transactionRepository = transactionRepository;
         }
@@ -29,13 +31,17 @@ namespace FinanceControl.Application.Services
         int? pageNumber = null,
         int? pageSize = null)
      {
+            var currentUserId = GetCurrentUserId();
+
             Expression<Func<Transaction, bool>> filter = t =>
                 t.Date >= startDate && t.Date <= endDate &&
+                t.UserId == currentUserId &&
                 (!categoryId.HasValue || t.CategoryId == categoryId.Value) &&
                 (!paymentMethodId.HasValue || t.PaymentMethodId == paymentMethodId.Value);
 
             int? skip = null;
             int? take = null;
+
             if (pageNumber.HasValue && pageSize.HasValue)
             {
                 skip = (pageNumber.Value - 1) * pageSize.Value;

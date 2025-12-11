@@ -1,14 +1,14 @@
-﻿using AutoMapper;
-using FinanceControl.API.Extensions;
+﻿using FinanceControl.API.Extensions;
 using FinanceControl.Application.DTOs;
+using FinanceControl.Application.Features.Transactions.Commands;
+using FinanceControl.Application.Features.Transactions.Queries;
 using FinanceControl.Application.Interfaces;
 using FinanceControl.Application.Validators;
 using FinanceControl.Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using System.Numerics;
 
 namespace FinanceControl.API.Controllers
 {
@@ -16,25 +16,32 @@ namespace FinanceControl.API.Controllers
     [Route("api/[controller]")]
     public class TransactionController : MainController
     {
-        private readonly ITransactionService _transactionService;
-        private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public TransactionController(ITransactionService transactionService, IMapper mapper, INotificator notificator) : base(notificator)
+        public TransactionController(IMediator mediator, INotificator notificator) : base(notificator)
         {
-            _transactionService = transactionService;
-            _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] Dictionary<string, string>? filters, [FromQuery] int? pageNumber = null, [FromQuery] int? pageSize = null)
         {
-            var transactions = await _transactionService.GetAllAsync(filters,
-                                                                     pageNumber,
-                                                                     pageSize,
-                                                                     Guid.Parse(UserId),
-                                                                     includes: IncludeTransactionRelations());
+            var result = await _mediator.Send(new GetAllTransactionsQuery(filters,
+                                                                          pageNumber,
+                                                                          pageSize,
+                                                                          Includes: IncludeTransactionRelations()));
+            return CustomResponse(result);
+        }
 
-            return CustomResponse(transactions);
+        [HttpGet("{id:Guid}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var result = await _mediator.Send(new GetTransactionByIdQuery(id,
+                                                                          Includes: IncludeTransactionRelations()));
+
+            if (result == null) return NotFound();
+
+            return CustomResponse(result);
         }
 
         [HttpGet("by-period")]
@@ -46,32 +53,25 @@ namespace FinanceControl.API.Controllers
                           [FromQuery] int? pageNumber = null,
                           [FromQuery] int? pageSize = null)
         {
-            var transactions = await _transactionService.GetTransactionsByPeriodAsync(
-                startDate, endDate, categoryId, paymentMethodId, pageNumber, pageSize);
 
-            return CustomResponse(transactions);
+            var result = await _mediator.Send(new GetTransactionsByPeriodQuery(startDate,
+                                                                               endDate,
+                                                                               categoryId,
+                                                                               paymentMethodId,
+                                                                               pageNumber,
+                                                                               pageSize));
+            return CustomResponse(result);
         }
 
-        [HttpGet("{id:Guid}")]
-        public async Task<IActionResult> GetById(Guid id)
-        {
-            var transaction = await _transactionService.GetByIdAsync(id,
-                includes: IncludeTransactionRelations());
-
-            if (transaction == null) return NotFound();
-
-            return CustomResponse(transaction);
-        }
 
         [HttpPost]
         [ValidationContext(typeof(TransactionCreateValidator))]
         public async Task<IActionResult> Create([FromBody] TransactionDto transactionDto)
         {
-            var transaction = _mapper.Map<Transaction>(transactionDto);
-            transaction.UserId = Guid.Parse(UserId);
+            var result = await _mediator.Send(new CreateTransactionCommand(transactionDto,
+                                                                           Includes: IncludeTransactionRelations()));
 
-            var createdTransaction = await _transactionService.AddAsync(transaction);
-            return CustomResponse(createdTransaction);
+            return CustomResponse(result);
         }
 
         [HttpPut("{id:Guid}")]
@@ -84,26 +84,14 @@ namespace FinanceControl.API.Controllers
                 return CustomResponse();
             }
 
-            var transaction = await _transactionService.GetByIdAsync(transactionDto.Id ?? Guid.Empty, true);
-
-            if (transaction == null)
-                return NotFound();
-
-            _mapper.Map(transactionDto, transaction);
-
-            await _transactionService.UpdateAsync(transaction);
-
-            return CustomResponse(transaction);
+            await _mediator.Send(new UpdateTransactionCommand(transactionDto));
+            return CustomResponse();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var transaction = await _transactionService.GetByIdAsync(id);
-
-            if (transaction == null) return NotFound();
-
-            await _transactionService.DeleteAsync(id);
+            await _mediator.Send(new DeleteTransactionCommand(id));
             return CustomResponse();
         }
 

@@ -1,4 +1,5 @@
-﻿using FinanceControl.Application.Interfaces;
+﻿using FinanceControl.Application.Features.Transactions.Handlers;
+using FinanceControl.Application.Interfaces;
 using FinanceControl.Application.Notifications;
 using FinanceControl.Application.Services;
 using FinanceControl.Application.Validators;
@@ -24,6 +25,12 @@ namespace FinanceControl.API.Configurations
             //Mapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddAutoMapper(typeof(MappingProfile));
+
+            //Mediatr
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssemblies(typeof(TransactionCommandHandler).Assembly);
+            });
 
             //Repositories
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

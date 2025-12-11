@@ -1,4 +1,5 @@
 ﻿using FinanceControl.Domain.Entities;
+using System.Linq.Expressions;
 
 namespace FinanceControl.Application.Interfaces
 {
@@ -10,7 +11,6 @@ namespace FinanceControl.Application.Interfaces
             Dictionary<string, string>? filters,
             int? pageNumber = null,
             int? pageSize = null,
-            Guid? userId = null,
             Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null);
 
         Task<TDto?> GetByIdAsync(
@@ -21,6 +21,8 @@ namespace FinanceControl.Application.Interfaces
             Guid id,
             bool returnEntity,
             Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null);
+
+        Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate);
 
         Task<TDto?> AddAsync(
             TDto dto,

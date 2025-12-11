@@ -8,21 +8,27 @@ namespace FinanceControl.Domain.Interfaces
             Expression<Func<TEntity, bool>>? filter = null,
             Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null,
             int? skip = null,
-            int? take = null);
+            int? take = null,
+            Guid? userId = null);
 
         Task<TEntity?> GetByIdAsync(
             Guid id,
-            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null);
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null,
+            Guid? userId = null);
 
-        Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<bool> ExistsAsync(
+            Expression<Func<TEntity, bool>> predicate,
+            Guid? userId = null);
 
-        Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null);
+        Task<int> CountAsync(
+            Expression<Func<TEntity, bool>>? predicate = null,
+            Guid? userId = null);
 
         Task<TEntity> AddAsync(TEntity entity);
 
         Task UpdateAsync(TEntity entity);
 
-        Task DeleteAsync(Guid id);
+        Task DeleteAsync(Guid id, Guid? userId = null);
 
         Task<int> SaveChangesAsync();
     }

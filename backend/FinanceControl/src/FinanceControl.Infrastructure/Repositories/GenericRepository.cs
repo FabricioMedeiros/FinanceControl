@@ -14,21 +14,30 @@ namespace FinanceControl.Infrastructure.Repositories
         {
             _context = context;
         }
-
+    
         protected IQueryable<TEntity> ApplyIncludes(
-            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes)
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes,
+            Guid? userId = null)
         {
             IQueryable<TEntity> query = _context.Set<TEntity>();
-            return includes != null ? includes(query) : query;
+
+            if (includes != null)
+                query = includes(query);
+
+            if (userId.HasValue && typeof(TEntity).GetProperty("UserId") != null)
+                query = query.Where(e => e.UserId == userId.Value);
+
+            return query;
         }
 
         public async Task<(IEnumerable<TEntity> Items, int TotalRecords)> GetAllAsync(
             Expression<Func<TEntity, bool>>? filter = null,
             Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null,
             int? skip = null,
-            int? take = null)
+            int? take = null,
+            Guid? userId = null)
         {
-            IQueryable<TEntity> query = ApplyIncludes(includes);
+            IQueryable<TEntity> query = ApplyIncludes(includes, userId);
 
             if (filter != null)
                 query = query.Where(filter);
@@ -44,9 +53,10 @@ namespace FinanceControl.Infrastructure.Repositories
 
         public async Task<TEntity?> GetByIdAsync(
             Guid id,
-            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null)
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null,
+            Guid? userId = null)
         {
-            IQueryable<TEntity> query = ApplyIncludes(includes);
+            IQueryable<TEntity> query = ApplyIncludes(includes, userId);
             return await query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
@@ -63,9 +73,11 @@ namespace FinanceControl.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id, Guid? userId = null)
         {
-            var entity = await _context.Set<TEntity>().FindAsync(id);
+            IQueryable<TEntity> query = ApplyIncludes(null, userId);
+            var entity = await query.FirstOrDefaultAsync(e => e.Id == id);
+
             if (entity != null)
             {
                 _context.Set<TEntity>().Remove(entity);
@@ -78,16 +90,20 @@ namespace FinanceControl.Infrastructure.Repositories
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate, Guid? userId = null)
         {
-            return await _context.Set<TEntity>().AnyAsync(predicate);
+            IQueryable<TEntity> query = ApplyIncludes(null, userId);
+            return await query.AnyAsync(predicate);
         }
 
-        public async Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null)
+        public async Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null, Guid? userId = null)
         {
-            return predicate == null
-                ? await _context.Set<TEntity>().CountAsync()
-                : await _context.Set<TEntity>().CountAsync(predicate);
+            IQueryable<TEntity> query = ApplyIncludes(null, userId);
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            return await query.CountAsync();
         }
     }
 }
