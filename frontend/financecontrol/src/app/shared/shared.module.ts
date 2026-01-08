@@ -9,12 +9,14 @@ import { CurrencyFormatPipe } from './pipes/currency-format.pipe';
 import { CategoryService } from './services/category.service';
 import { PaymentMethodService } from './services/payment-method.service';
 import { TransactionService } from './services/transaction.service';
+import { ButtonScrollTopComponent } from './components/button-scroll-top/button-scroll-top.component';
 
 @NgModule({
   declarations: [
     SearchBarComponent,
     PaginationComponent,
-    CurrencyFormatPipe
+    CurrencyFormatPipe,
+    ButtonScrollTopComponent
   ],
   imports: [
     CommonModule,
@@ -24,7 +26,8 @@ import { TransactionService } from './services/transaction.service';
   exports:[
     PaginationComponent,
     SearchBarComponent,
-    CurrencyFormatPipe
+    CurrencyFormatPipe,
+    ButtonScrollTopComponent
   ],
   providers: [CategoryService, PaymentMethodService, TransactionService]
 })
